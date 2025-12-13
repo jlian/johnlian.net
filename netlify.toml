@@ -17,12 +17,12 @@
 
 [[redirects]]
   from = "https://jlian.co/*"
-  to = "https://johnspecificproblems.net/:splat"
+  to = "https://johnlian.net/:splat"
   status = 301
   force = true
 
 [[redirects]]
   from = "https://www.jlian.co/*"
-  to = "https://johnspecificproblems.net/:splat"
+  to = "https://johnlian.net/:splat"
   status = 301
   force = true

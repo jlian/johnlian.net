@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 1066.6667 1066.6667" role="img" aria-labelledby="title desc">
+  <title id="title">JL monogram icon</title>
+  <desc id="desc">Red square background with white JL letterforms and red accents</desc>
+  <path d="M0 0h800v800H0z" fill="#ed1d24" transform="matrix(1.3333333 0 0 -1.3333333 0 1066.6667)"/>
+  <path d="M0 0h326.667v183.658H178.556V700H0Z" fill="#fff" transform="matrix(1.3333333 0 0 -1.3333333 564.6188 1001.0155)"/>
+  <path d="M0 0v560h44V44h148V0Z" fill="#ed1d24" transform="matrix(1.3333333 0 0 -1.3333333 654.66667 908)"/>
+  <path d="M0 0h-178.556v-516.342H-326.667V-700H0Z" fill="#fff" transform="matrix(1.3333333 0 0 -1.3333333 502.39653 67.682133)"/>
+  <path d="M0 0v560h-44V44h-148V0Z" fill="#ed1d24" transform="matrix(1.3333333 0 0 -1.3333333 412 908)"/>
+</svg>

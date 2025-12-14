@@ -22,6 +22,7 @@ pygmentsCodefences = true
 [params]
   custom_css = ["css/style.css"]
   favicon = "/favicon.ico"
+  theme_color = "#ed1d24"
   description = "John Lian's personal website"
   wikipedia = "https://en.wikipedia.org/wiki/User:Lianguanlun"
   github = "https://github.com/jlian"

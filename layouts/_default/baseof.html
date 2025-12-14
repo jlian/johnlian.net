@@ -16,6 +16,8 @@
     {{ else }}
       <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
     {{ end }}
+    {{- $desc := .Params.description | default .Site.Params.description -}}
+    {{ with $desc }}<meta name="description" content="{{ . }}">{{ end }}
     <link rel="canonical" href="{{ .Permalink }}">
     {{ if .IsHome }}
       {{- $base := "/" | absURL | strings.TrimRight "/" -}}

@@ -1,2 +1,16 @@
-<script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script src="{{ "js/post-enhancements.js" | absURL }}" defer></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((reg) => reg.unregister()));
+    if (window.caches) {
+      caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
+    }
+  }
+</script>
+{{ $isPage := .IsPage }}
+{{ $hasMermaid := and $isPage (in .RawContent "```mermaid") }}
+{{ if $isPage }}
+  <script src="{{ "js/post-enhancements.js" | absURL }}" defer></script>
+{{ end }}
+{{ if $hasMermaid }}
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+{{ end }}

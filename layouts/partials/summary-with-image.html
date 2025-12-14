@@ -1,12 +1,17 @@
 {{ $paramDefault := .Site.Params.default_featured_image | default "images/default-featured.jpg" }}
 {{ $hasFeaturedImage := .Params.featured_image }}
 {{ $rawImagePath := $hasFeaturedImage | default $paramDefault }}
-{{ $featured_image := (trim $rawImagePath "/") | absURL }}
+{{ $imagePath := trim $rawImagePath "/" }}
+{{ $webpPath := replaceRE "\\.[^.]+$" ".webp" $imagePath }}
+{{ $webpExists := fileExists (printf "static/%s" $webpPath) }}
+{{ $servedPath := cond $webpExists $webpPath $imagePath }}
+{{ $imageUrl := partial "helpers/image-url.html" (dict "path" $servedPath) }}
+{{ $bgStyle := printf "background-position:center; background-repeat:no-repeat; background-size:cover; background-image:url('%s');" $imageUrl }}
 <div class="mid-gray overflow-hidden bb-ns pv3 b--black-10">
   <div class="flex flex-column flex-row-ns">
     <div class="mb3 pr3-ns mb0-ns w-100 w-40-ns">
       <a href="{{ .RelPermalink }}" class="db dim aspect-ratio aspect-ratio--16x9">
-        <div style="background: url('{{ $featured_image }}') center;" class="img aspect-ratio--object cover overflow-hidden flex" alt="image from {{ .Title }}">
+        <div style="{{ $bgStyle | safeCSS }}" class="img aspect-ratio--object cover overflow-hidden flex" role="presentation" aria-hidden="true">
             <div class="bg-black-20 cover w-100 dn-ns">
                 <div class="pa3">
                     <time class="f6 mb2 dib ttu tracked white-80">

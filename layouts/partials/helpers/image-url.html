@@ -1,0 +1,6 @@
+{{- $path := trim .path "/" -}}
+{{- $webp := replaceRE "\\.[^.]+$" ".webp" $path -}}
+{{- if fileExists (printf "static/%s" $webp) -}}
+  {{- $path = $webp -}}
+{{- end -}}
+{{- printf "/%s" $path | relURL -}}

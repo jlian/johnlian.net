@@ -17,6 +17,22 @@
       <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
     {{ end }}
     <link rel="canonical" href="{{ .Permalink }}">
+    {{ if .IsHome }}
+      {{- $base := "/" | absURL | strings.TrimRight "/" -}}
+      {{- $image := "/images/bio-photo.jpg" | absURL -}}
+      {{- $sameAs := slice -}}
+      {{ with .Site.Params.wikipedia }}{{ $sameAs = $sameAs | append . }}{{ end }}
+      {{ with .Site.Params.github }}{{ $sameAs = $sameAs | append . }}{{ end }}
+      {{ with .Site.Params.linkedin }}{{ $sameAs = $sameAs | append . }}{{ end }}
+      {{ with .Site.Params.instagram }}{{ $sameAs = $sameAs | append . }}{{ end }}
+      {{ with .Site.Params.twitter }}{{ $sameAs = $sameAs | append . }}{{ end }}
+      {{ with .Site.Params.youtube }}{{ $sameAs = $sameAs | append . }}{{ end }}
+      {{- $person := dict "@context" "https://schema.org" "@type" "Person" "name" .Site.Title "url" $base "image" $image "description" .Site.Params.description -}}
+      {{ if gt (len $sameAs) 0 }}
+        {{- $person = merge $person (dict "sameAs" $sameAs) -}}
+      {{ end }}
+      <script type="application/ld+json">{{ $person | jsonify | safeJS }}</script>
+    {{ end }}
 
     {{ partial "site-style.html" . }}
     {{ block "favicon" . }}

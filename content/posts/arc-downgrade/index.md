@@ -8,7 +8,7 @@ tags:
 - samsung
 - denon
 - hdmi-cec
-featured_image: "/images/posts/arc-downgrade/arc.jpeg"
+featured_image: "arc.jpeg"
 description: "Backing away from Samsung eARC on the S95B made the audio stack calm down."
 ---
 

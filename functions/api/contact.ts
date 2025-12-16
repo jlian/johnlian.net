@@ -23,62 +23,91 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     });
   }
 
-  const form = await request.formData();
-  const name = (form.get("name") || "").toString().trim();
-  const email = (form.get("email") || "").toString().trim();
-  const message = (form.get("message") || "").toString().trim();
-  const turnstileToken = (form.get("cf-turnstile-response") || "").toString().trim();
+  try {
+    const contentType = request.headers.get("content-type") || "";
 
-  if (!name || !email || !message) {
-    return new Response("Missing required fields", { status: 400 });
-  }
+    let name = "";
+    let email = "";
+    let message = "";
+    let turnstileToken = "";
 
-  const turnstileResult = await validateTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, request);
-  if (!turnstileResult.ok) {
-    return new Response(turnstileResult.message, { status: 400 });
-  }
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      const text = await request.text();
+      const params = new URLSearchParams(text);
+      name = (params.get("name") || "").toString().trim();
+      email = (params.get("email") || "").toString().trim();
+      message = (params.get("message") || "").toString().trim();
+      turnstileToken = (params.get("cf-turnstile-response") || "").toString().trim();
+    } else {
+      // Default to multipart/form-data or other form encodings
+      let form: FormData;
+      try {
+        form = await request.formData();
+      } catch (e) {
+        console.error("Failed to parse form data", e);
+        return new Response("Invalid form encoding", { status: 400 });
+      }
 
-  // Store first so we don't lose submissions if email delivery fails
-  const submissionId = await storeMessage(env.CONTACT_MESSAGES, {
-    name,
-    email,
-    message,
-    turnstile: turnstileResult.valid,
-    userAgent: request.headers.get("user-agent") || undefined,
-    referer: request.headers.get("referer") || undefined,
-  });
-
-  const emailStatus = await sendEmail(env, { name, email, message });
-
-  // Update KV record with email send status if KV is configured
-  if (submissionId && env.CONTACT_MESSAGES) {
-    try {
-      await env.CONTACT_MESSAGES.put(
-        submissionId,
-        JSON.stringify({
-          name,
-          email,
-          message,
-          turnstile: turnstileResult.valid,
-          userAgent: request.headers.get("user-agent") || undefined,
-          referer: request.headers.get("referer") || undefined,
-          createdAt: new Date().toISOString(),
-          emailSendOk: emailStatus.ok,
-          emailSendStatus: emailStatus.status,
-          emailSendError: emailStatus.ok ? undefined : emailStatus.message,
-        }),
-        { metadata: { email } },
-      );
-    } catch (error) {
-      console.error("KV update after email failed", error);
+      name = (form.get("name") || "").toString().trim();
+      email = (form.get("email") || "").toString().trim();
+      message = (form.get("message") || "").toString().trim();
+      turnstileToken = (form.get("cf-turnstile-response") || "").toString().trim();
     }
-  }
 
-  if (!emailStatus.ok) {
-    return new Response(emailStatus.message, { status: 500 });
-  }
+    if (!name || !email || !message) {
+      return new Response("Missing required fields", { status: 400 });
+    }
 
-  return Response.redirect(SUCCESS_REDIRECT, 303);
+    const turnstileResult = await validateTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, request);
+    if (!turnstileResult.ok) {
+      return new Response(turnstileResult.message, { status: 400 });
+    }
+
+    // Store first so we don't lose submissions if email delivery fails
+    const submissionId = await storeMessage(env.CONTACT_MESSAGES, {
+      name,
+      email,
+      message,
+      turnstile: turnstileResult.valid,
+      userAgent: request.headers.get("user-agent") || undefined,
+      referer: request.headers.get("referer") || undefined,
+    });
+
+    const emailStatus = await sendEmail(env, { name, email, message });
+
+    // Update KV record with email send status if KV is configured
+    if (submissionId && env.CONTACT_MESSAGES) {
+      try {
+        await env.CONTACT_MESSAGES.put(
+          submissionId,
+          JSON.stringify({
+            name,
+            email,
+            message,
+            turnstile: turnstileResult.valid,
+            userAgent: request.headers.get("user-agent") || undefined,
+            referer: request.headers.get("referer") || undefined,
+            createdAt: new Date().toISOString(),
+            emailSendOk: emailStatus.ok,
+            emailSendStatus: emailStatus.status,
+            emailSendError: emailStatus.ok ? undefined : emailStatus.message,
+          }),
+          { metadata: { email } },
+        );
+      } catch (error) {
+        console.error("KV update after email failed", error);
+      }
+    }
+
+    if (!emailStatus.ok) {
+      return new Response(emailStatus.message, { status: 500 });
+    }
+
+    return Response.redirect(SUCCESS_REDIRECT, 303);
+  } catch (err) {
+    console.error("Unhandled exception in /api/contact", err);
+    return new Response("Internal Server Error", { status: 500 });
+  }
 };
 
 async function validateTurnstile(token: string, secret: string | undefined, request: Request) {

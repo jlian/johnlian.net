@@ -5,7 +5,7 @@ tags:
 - robotics
 - frc
 link: http://www.frc4955.com
-featured_image: "/images/latech.jpg"
+featured_image: "latech.jpg"
 description: "Tiny victory lap for getting the robotics team’s website online."
 ---
 

@@ -6,7 +6,7 @@ tags:
 - homekit
 - home networking
 - wifi
-featured_image: "/images/home2.jpg"
+featured_image: "home2.jpg"
 description: "Wow, I thought I'd never stop seeing \"No Response\"."
 ---
 
@@ -28,7 +28,7 @@ For me, the root cause of the issue was that my router ([ASUS RT-AC88U](http://a
 
 1. Set *Control Channel* to **something other than Auto** for both **Bands**. [Learn how to set wifi channels](https://iihelp.iinet.net.au/Improving_WiFi_Signal_and_Changing_Channels)
 
-    {{< figure src="/images/router-settings2.png">}}
+![Router settings](router-settings2.png)
 
 1. Go to  **Professional**
 
@@ -41,7 +41,7 @@ For me, the root cause of the issue was that my router ([ASUS RT-AC88U](http://a
     - Explicit Beamforming: **Disable**
     - Universal Beamforming: **Disable**
 
-    {{< figure src="/images/router-settings.png" caption="Screenshot shortened for brevity">}}
+![Router settings (screenshot shortened for brevity)](router-settings.png)
 
     Then hit **Apply**
 
@@ -67,7 +67,7 @@ Even though I just disabled most of the advanced features of my router, I didn't
 
 *But, but - my router is [almost $300](http://a.co/16d0YZQ)!!* That's what I said too. It turns out that there are a few factors that make it hard for HomeKit to be reliable on every wifi setup.
 
-{{< figure src="/images/router.png" >}}
+![Router diagram](router.png)
 
 ### To get good wifi in an apartment building you have to use 5GHz
 

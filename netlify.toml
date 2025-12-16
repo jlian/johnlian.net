@@ -48,12 +48,6 @@
   status = 200
 
 [[headers]]
-  for = "/site.webmanifest"
-  [headers.values]
-    Content-Type = "application/manifest+json; charset=utf-8"
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
   for = "/favicon*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"

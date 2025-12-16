@@ -8,10 +8,15 @@
 
 {{- with $page -}}
   {{- with .Resources.GetMatch $path -}}
-    {{- $img := .Resize $size -}}
-    {{- $webp := .Resize (printf "%s webp" $size) -}}
-    {{- $imgUrl = $img.RelPermalink -}}
-    {{- $webpUrl = $webp.RelPermalink -}}
+    {{- if eq .MediaType.SubType "gif" -}}
+      {{- $imgUrl = .RelPermalink -}}
+      {{- $webpUrl = "" -}}
+    {{- else -}}
+      {{- $img := .Resize $size -}}
+      {{- $webp := .Resize (printf "%s webp" $size) -}}
+      {{- $imgUrl = $img.RelPermalink -}}
+      {{- $webpUrl = $webp.RelPermalink -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 

@@ -1,0 +1,5 @@
+/post/* /posts/:splat 301
+/apple-touch-icon-precomposed.png /apple-touch-icon.png 200
+/apple-touch-icon-120x120.png /apple-touch-icon.png 200
+/apple-touch-icon-120x120-precomposed.png /apple-touch-icon.png 200
+/*/apple-touch-icon.png /apple-touch-icon.png 200

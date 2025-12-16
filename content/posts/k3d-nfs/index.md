@@ -21,7 +21,7 @@ This post explains each speed bump and how it became this repo:
 
 The GitHub issue links to [marcoaraujojunior's Dockerfile](https://github.com/marcodearaujo/k3s-docker/commit/914c6f84e0b086ba86b15806062771d9fae5c274) through a commit mention.
 
-![Screenshot of the GitHub issue showing the commit mention that inspired this work](/images/posts/k3d-nfs/commit-mention.png)
+![Screenshot of the GitHub issue showing the commit mention that inspired this work](commit-mention.png)
 
 On paper it solved everything: start from Alpine (a small Linux distro), install the NFS client tools, copy the official k3s binaries on top, and run a short entrypoint script that turns on the NFS service before handing control to k3s. There was no registry image at the time, so the flow looked like this:
 

@@ -1,7 +1,7 @@
 ---
 title: "State of my home automation in 2018"
 date: 2018-11-21T20:07:29-08:00
-featured_image: "/images/home.jpg"
+featured_image: "home.jpg"
 tags:
 - home automation
 - homekit
@@ -23,7 +23,7 @@ Since moving to Seattle I have been gradually automating an ordinary apartment. 
 
 The automation itch started in the laziest way possible: I was already under the blanket and wished the lamp would turn off by itself. That nudge toward [Philips Hue](https://www.philips-hue.com) led to [HomeKit](https://www.apple.com/ios/home/), which led to buying a [Raspberry Pi](https://www.raspberrypi.org) at 1 a.m. because I could not believe there was no native way to control the TV. Once one subsystem cooperated, every other annoyance turned into a candidate for automation. The snapshot below shows the apartment as it stands today.
 
-![Living room overview with Hue-lit lamps, TV idle, and the automation rack tucked away](/images/posts/home-automation/living-room.jpg)
+![Living room overview with Hue-lit lamps, TV idle, and the automation rack tucked away](living-room.jpg)
 
 ## Lamps: the entry point
 
@@ -32,7 +32,7 @@ Hue bulbs are still the friendliest introduction to home automation. The starter
 - Hardware: Hue Bridge v2, six A19 color bulbs, one Lightstrip Plus, two Hue Dimmer remotes.
 - Software: Home app automations for sunrise and sunset, Hue app for color scenes, HomeKit scenes for pairing with motion sensors later.
 
-![Hue lamp glow with Home app scene tiles pulled up on the iPad](/images/home.jpg)
+![Hue lamp glow with Home app scene tiles pulled up on the iPad](home.jpg)
 
 Hue's value is less in the rainbow gimmick and more in the automation primitives: every lamp reports state, exposes brightness, and can join a HomeKit scene.
 
@@ -153,7 +153,7 @@ Backlog highlights right now:
 - Automatic music: imagine [Sonos](https://www.sonos.com/) powering up with `Arrive Home`. Requires a speaker upgrade and some [Spotify Connect](https://www.spotify.com/us/connect/) scripting.
 - Coffee: once the kettle and grinder join the party, morning automation graduates from novelty to necessity.
 
-![Future-state mockup with shades down, thermostat upgraded, and coffee gear ready](/images/posts/home-automation/future-state.jpg)
+![Future-state mockup with shades down, thermostat upgraded, and coffee gear ready](future-state.jpg)
 
 ## What is working so far
 

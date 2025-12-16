@@ -7,7 +7,7 @@ tags:
 - linux
 - hid
 - home lab
-featured_image: "/images/posts/tinypilot-usb-wake/otg-overview.jpg"
+featured_image: "otg-overview.jpg"
 description: "Well maybe browser is simplifying it a bit. The real story is about making a Raspberry Pi-based KVM (TinyPilot) behave like a normal USB keyboard so it can wake a sleeping PC over USB."
 ---
 

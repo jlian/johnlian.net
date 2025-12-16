@@ -38,12 +38,8 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     return new Response(turnstileResult.message, { status: 400 });
   }
 
-  const emailStatus = await sendEmail(env, { name, email, message });
-  if (!emailStatus.ok) {
-    return new Response(emailStatus.message, { status: 500 });
-  }
-
-  await storeMessage(env.CONTACT_MESSAGES, {
+  // Store first so we don't lose submissions if email delivery fails
+  const submissionId = await storeMessage(env.CONTACT_MESSAGES, {
     name,
     email,
     message,
@@ -51,6 +47,36 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     userAgent: request.headers.get("user-agent") || undefined,
     referer: request.headers.get("referer") || undefined,
   });
+
+  const emailStatus = await sendEmail(env, { name, email, message });
+
+  // Update KV record with email send status if KV is configured
+  if (submissionId && env.CONTACT_MESSAGES) {
+    try {
+      await env.CONTACT_MESSAGES.put(
+        submissionId,
+        JSON.stringify({
+          name,
+          email,
+          message,
+          turnstile: turnstileResult.valid,
+          userAgent: request.headers.get("user-agent") || undefined,
+          referer: request.headers.get("referer") || undefined,
+          createdAt: new Date().toISOString(),
+          emailSendOk: emailStatus.ok,
+          emailSendStatus: emailStatus.status,
+          emailSendError: emailStatus.ok ? undefined : emailStatus.message,
+        }),
+        { metadata: { email } },
+      );
+    } catch (error) {
+      console.error("KV update after email failed", error);
+    }
+  }
+
+  if (!emailStatus.ok) {
+    return new Response(emailStatus.message, { status: 500 });
+  }
 
   return Response.redirect(SUCCESS_REDIRECT, 303);
 };
@@ -95,8 +121,13 @@ async function sendEmail(
   const to = env.CONTACT_TO_EMAIL;
   const from = env.CONTACT_FROM_EMAIL;
 
-  if (!apiKey || !to || !from) {
-    return { ok: false, message: "Email configuration missing" };
+  const missing: string[] = [];
+  if (!apiKey) missing.push("RESEND_API_KEY");
+  if (!to) missing.push("CONTACT_TO_EMAIL");
+  if (!from) missing.push("CONTACT_FROM_EMAIL");
+
+  if (missing.length) {
+    return { ok: false, status: 0, message: `Email configuration missing: ${missing.join(", ")}` };
   }
 
   const body = {
@@ -104,22 +135,35 @@ async function sendEmail(
     to: [to],
     subject: `New contact form message from ${payload.name}`,
     text: `Name: ${payload.name}\nEmail: ${payload.email}\n\n${payload.message}`,
+    reply_to: payload.email,
   };
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    return { ok: false, message: "Failed to send email" };
+  let response: Response;
+  try {
+    response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    return { ok: false, status: 0, message: `Resend request failed: ${(err as Error).message}` };
   }
 
-  return { ok: true, message: "" };
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    const requestId = response.headers.get("x-request-id") || response.headers.get("cf-ray") || "";
+    const suffix = requestId ? ` (request-id: ${requestId})` : "";
+    return {
+      ok: false,
+      status: response.status,
+      message: `Resend error ${response.status}${suffix}: ${text || "(no body)"}`,
+    };
+  }
+
+  return { ok: true, status: response.status, message: "" };
 }
 
 async function storeMessage(
@@ -132,9 +176,9 @@ async function storeMessage(
     userAgent?: string;
     referer?: string;
   },
-) {
+): Promise<string | undefined> {
   if (!kv) {
-    return;
+    return undefined;
   }
 
   const id = `contact:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
@@ -145,7 +189,11 @@ async function storeMessage(
 
   try {
     await kv.put(id, JSON.stringify(entry), { metadata: { email: record.email } });
+    return id;
   } catch (error) {
     console.error("KV write failed", error);
+    return undefined;
   }
+
+  return undefined;
 }

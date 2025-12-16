@@ -2,7 +2,7 @@
 date: 2015-05-20T20:07:29-08:00
 title: "Efficient animation with MATLAB"
 description: "Nerdy flex on squeezing smooth animations out of pre-2014 MATLAB."
-featured_image: "/images/thesis.jpg"
+featured_image: "thesis.jpg"
 tags:
 - MATLAB
 - thesis
@@ -14,7 +14,7 @@ I used animation to help me visualize some of the work I did for my [honours the
 
 This is what I had in the end:
 
-![Shockwave created by a driving piston in a one-dimensional nonlinear lattice](/matlab-animation/shock.gif)
+![Shockwave created by a driving piston in a one-dimensional nonlinear lattice](shock.gif)
 
 ## The "easy" way
 
@@ -64,7 +64,7 @@ end
 
 I wrote a simple script that uses this technique to animate a particle in a sine trajectory. It should look like this:[^2]
 
-![A particle with sine trajectory](/matlab-animation/sine.gif)
+![A particle with sine trajectory](sine.gif)
 
 Full source:
 

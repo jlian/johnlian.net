@@ -108,7 +108,7 @@ Here, `particlePosition` contains up to five trajectories. Note the use of `num2
 
 You can download the other script to see how this can be implemented. It looks like this:
 
-![Three particles with different trajectories](/matlab-animation/sine2.gif)
+![Three particles with different trajectories](sine2.gif)
 
 Full source:
 

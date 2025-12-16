@@ -103,7 +103,8 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       return new Response(emailStatus.message, { status: 500 });
     }
 
-    return Response.redirect(SUCCESS_REDIRECT, 303);
+    const redirectUrl = new URL(SUCCESS_REDIRECT, request.url).toString();
+    return Response.redirect(redirectUrl, 303);
   } catch (err) {
     console.error("Unhandled exception in /api/contact", err);
 

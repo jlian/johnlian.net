@@ -7,13 +7,13 @@ tags:
 - raspberry pi
 - home automation
 - hdmi
-featured_image: "/images/posts/hdmi-cec/featured.jpg"
+featured_image: "featured.jpg"
 description: "Revenge tale against Consumer Electronics \"Control\"."
 ---
 
 For years I treated [HDMI-CEC](https://en.wikipedia.org/wiki/Consumer_Electronics_Control) like a house spirit: sometimes helpful, mostly temperamental, never fully understood. My living-room stack is straightforward: Samsung TV on [ARC](https://en.wikipedia.org/wiki/HDMI#ARC_and_eARC) (NOT eARC - story for another day), Denon AVR-X1700H hidden in a closet, Apple TV plus a bunch of consoles connected to the receiver, and a [Raspberry Pi 4](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/) already doing [Homebridge](https://homebridge.io/) duty. When it comes to CEC, the Apple TV handles it like a dream, but every console behaves like it missed the last week of CEC school. They wake the TV, switch the input, then leave the Denon asleep so I’m back to toggling audio outputs manually.
 
-![My media closet where all the consoles are](/images/posts/hdmi-cec/media-closet.jpg)
+![My media closet where all the consoles are](media-closet.jpg)
 
 > I documented the [media closet build-out](/posts/media-closet/) separately, so if you want the full wiring tour (and the before/after photos), start there.
 
@@ -53,7 +53,7 @@ And the key opcodes we ended up caring about:
 
 The Raspberry Pi 4 I have exposes `/dev/cec0` interface on its micro-HDMI, and with a $7 micro-HDMI to HDMI cable plugged into HDMI input port on the receiver, it's possible to monitor CEC traffic from *everything connected to the receiver*.
 
-![Close-up photo of the Pi plugged into the TV’s ARC HDMI input, HDMI adapters visible](/images/posts/hdmi-cec/raspberry-pi-hdmi.jpg)
+![Close-up photo of the Pi plugged into the TV’s ARC HDMI input, HDMI adapters visible](raspberry-pi-hdmi.jpg)
 
 I was initially hesitant because of some [Hue Play Sync Box](https://www.philips-hue.com/en-us/support/product/sync-box/100010#How_do_I_know_if_I_have_a_sync_box_4K_or_8K)[^sync box] trauma: every HDMI splitter or inline gadget I’ve tried in front of the TV caused weird [EDID](https://en.wikipedia.org/wiki/Extended_Display_Identification_Data) breakage, troubles with HDR negotiation, or outright signal loss. But once I understood the Pi *never sits in the middle* of the HDMI handshake my concerns went away. By plugging it into an unused HDMI input on the AVR, it behaves like just another participant on the shared CEC bus. No signal regeneration, no spoofed EDIDs, nothing for the rest of the chain to notice.
 
@@ -234,7 +234,7 @@ Breaking it down:
 
 The second I typed this into `cec-client`’s interactive shell with `tx 15:70:00:00`, the Denon turned on and ARC anchored to the receiver even with only a console and TV powered on. I confirmed by checking the TV’s audio output:
 
-![Photo of TV UI confirming receiver output](/images/posts/hdmi-cec/output.jpg)
+![Photo of TV UI confirming receiver output](output.jpg)
 
 So the solution started to emerge: whenever a console wakes up and claims Active Source, the Pi should step in and send `15:70:00:00` to the Denon to kickstart audio negotiation.
 
@@ -355,7 +355,7 @@ Your job is to spot the missing step and teach the Pi to do it.
 
 Apple TV keeps doing its thing. PS5, Xbox, or Switch now wake the TV, the Pi nudges the Denon within half a second, and audio stays glued to the receiver. Latency is low enough that it feels native. The Pi sits in the closet pretending to be a slightly overqualified remote.
 
-![Picture of my TV and cat being comfortable](/images/posts/hdmi-cec/tv-and-cat.jpg)
+![Picture of my TV and cat being comfortable](tv-and-cat.jpg)
 
 There are still a couple of rough edges I haven’t tackled yet:
 

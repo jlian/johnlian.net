@@ -10,7 +10,6 @@ type Env = {
   CONTACT_TO_EMAIL?: string;
   CONTACT_FROM_EMAIL?: string;
   CONTACT_MESSAGES?: KVNamespace;
-  CONTACT_DEBUG?: string;
 };
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
@@ -26,47 +25,16 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   try {
-    const contentType = request.headers.get("content-type") || "";
-
-    let name = "";
-    let email = "";
-    let message = "";
-    let turnstileToken = "";
-
-    if (contentType.includes("application/x-www-form-urlencoded")) {
-      const text = await request.text();
-      const params = new URLSearchParams(text);
-      name = (params.get("name") || "").toString().trim();
-      email = (params.get("email") || "").toString().trim();
-      message = (params.get("message") || "").toString().trim();
-      turnstileToken = (params.get("cf-turnstile-response") || "").toString().trim();
-    } else {
-      // Default to multipart/form-data or other form encodings
-      let form: FormData;
-      try {
-        form = await request.formData();
-      } catch (e) {
-        console.error("Failed to parse form data", e);
-        return new Response("Invalid form encoding", { status: 400 });
-      }
-
-      name = (form.get("name") || "").toString().trim();
-      email = (form.get("email") || "").toString().trim();
-      message = (form.get("message") || "").toString().trim();
-      turnstileToken = (form.get("cf-turnstile-response") || "").toString().trim();
-    }
-
-    if (!name || !email || !message) {
-      return new Response("Missing required fields", { status: 400 });
-    }
+    const { name, email, message, turnstileToken } = await parseContactForm(request);
+    if (!name || !email || !message) return errorResponse(request, "Missing required fields", 400);
 
     const turnstileResult = await validateTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, request);
     if (!turnstileResult.ok) {
-      return new Response(turnstileResult.message, { status: 400 });
+      return errorResponse(request, turnstileResult.message, 400);
     }
 
-    // Store first so we don't lose submissions if email delivery fails
-    const submissionId = await storeMessage(env.CONTACT_MESSAGES, {
+    // Store (best-effort) for auditing/debugging.
+    await storeMessage(env.CONTACT_MESSAGES, {
       name,
       email,
       message,
@@ -75,64 +43,65 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       referer: request.headers.get("referer") || undefined,
     });
 
-    const emailStatus = await sendEmail(env, { name, email, message });
-
-    // Update KV record with email send status if KV is configured
-    if (submissionId && env.CONTACT_MESSAGES) {
-      try {
-        await env.CONTACT_MESSAGES.put(
-          submissionId,
-          JSON.stringify({
-            name,
-            email,
-            message,
-            turnstile: turnstileResult.valid,
-            userAgent: request.headers.get("user-agent") || undefined,
-            referer: request.headers.get("referer") || undefined,
-            createdAt: new Date().toISOString(),
-            emailSendOk: emailStatus.ok,
-            emailSendStatus: emailStatus.status,
-            emailSendError: emailStatus.ok ? undefined : emailStatus.message,
-          }),
-          { metadata: { email } },
-        );
-      } catch (error) {
-        console.error("KV update after email failed", error);
-      }
-    }
+    const emailStatus = await sendEmail(request, env, { name, email, message });
 
     if (!emailStatus.ok) {
       console.error("Email send failed", { status: emailStatus.status, message: emailStatus.message });
-      const errorRedirect = new URL(ERROR_REDIRECT, request.url).toString();
-      return Response.redirect(errorRedirect, 303);
+      return errorResponse(request, "Email send failed", 502);
     }
 
-    const redirectUrl = new URL(SUCCESS_REDIRECT, request.url).toString();
-    return Response.redirect(redirectUrl, 303);
+    return redirectResponse(request, SUCCESS_REDIRECT);
   } catch (err) {
     console.error("Unhandled exception in /api/contact", err);
 
-    const debug = env.CONTACT_DEBUG === "1";
-    if (debug) {
-      const message =
-        err instanceof Error
-          ? `${err.name}: ${err.message}${err.stack ? `\n${err.stack}` : ""}`
-          : String(err);
-      const capped = message.slice(0, 2000);
-      return new Response(capped, {
-        status: 500,
-        headers: { "Content-Type": "text/plain; charset=UTF-8" },
-      });
-    }
-
-    if (acceptsHtml(request)) {
-      const errorRedirect = new URL(ERROR_REDIRECT, request.url).toString();
-      return Response.redirect(errorRedirect, 303);
-    }
-
-    return new Response("Internal Server Error", { status: 500, headers: { "Content-Type": "text/plain; charset=UTF-8" } });
+    return errorResponse(request, "Internal Server Error", 500);
   }
 };
+
+async function parseContactForm(request: Request): Promise<{
+  name: string;
+  email: string;
+  message: string;
+  turnstileToken: string;
+}> {
+  // Cloudflare Workers generally support request.formData() for both
+  // multipart/form-data and application/x-www-form-urlencoded.
+  try {
+    const form = await request.formData();
+    return {
+      name: (form.get("name") || "").toString().trim(),
+      email: (form.get("email") || "").toString().trim(),
+      message: (form.get("message") || "").toString().trim(),
+      turnstileToken: (form.get("cf-turnstile-response") || "").toString().trim(),
+    };
+  } catch (e) {
+    // Fallback for odd encodings.
+    console.error("Failed to parse form data", e);
+    const text = await request.text();
+    const params = new URLSearchParams(text);
+    return {
+      name: (params.get("name") || "").toString().trim(),
+      email: (params.get("email") || "").toString().trim(),
+      message: (params.get("message") || "").toString().trim(),
+      turnstileToken: (params.get("cf-turnstile-response") || "").toString().trim(),
+    };
+  }
+}
+
+function redirectResponse(request: Request, path: string) {
+  const redirectUrl = new URL(path, request.url).toString();
+  return Response.redirect(redirectUrl, 303);
+}
+
+function errorResponse(request: Request, message: string, status: number) {
+  if (acceptsHtml(request)) {
+    return redirectResponse(request, ERROR_REDIRECT);
+  }
+  return new Response(message, {
+    status,
+    headers: { "Content-Type": "text/plain; charset=UTF-8" },
+  });
+}
 
 async function validateTurnstile(token: string, secret: string | undefined, request: Request) {
   if (!token) {
@@ -177,6 +146,7 @@ async function validateTurnstile(token: string, secret: string | undefined, requ
 }
 
 async function sendEmail(
+  request: Request,
   env: Pick<Env, "RESEND_API_KEY" | "CONTACT_TO_EMAIL" | "CONTACT_FROM_EMAIL">,
   payload: { name: string; email: string; message: string },
 ) {
@@ -193,11 +163,18 @@ async function sendEmail(
     return { ok: false, status: 0, message: `Email configuration missing: ${missing.join(", ")}` };
   }
 
+  const apiKeyValue = apiKey!;
+  const toValue = to!;
+  const fromValue = from!;
+
+  const hostname = safeHostname(request.url);
+  const fromHeader = formatFromHeader(hostname, fromValue);
+
   const body = {
-    from,
-    to: [to],
-    subject: `New contact form message from ${payload.name}`,
-    text: `Name: ${payload.name}\nEmail: ${payload.email}\n\n${payload.message}`,
+    from: fromHeader,
+    to: [toValue],
+    subject: `${hostname ? `[${hostname}] ` : ""}New contact form message from ${payload.name}`,
+    text: `${hostname ? `Site: ${hostname}\n` : ""}Name: ${payload.name}\nEmail: ${payload.email}\n\n${payload.message}`,
     reply_to: payload.email,
   };
 
@@ -206,7 +183,7 @@ async function sendEmail(
     response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKeyValue}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
@@ -227,6 +204,30 @@ async function sendEmail(
   }
 
   return { ok: true, status: response.status, message: "" };
+}
+
+function safeHostname(url: string) {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return "";
+  }
+}
+
+function formatFromHeader(hostname: string, configuredFrom: string) {
+  // If the user already provided a full RFC 5322-ish From value like
+  // "Name <email@domain.com>", respect it.
+  if (configuredFrom.includes("<") && configuredFrom.includes(">")) {
+    return configuredFrom;
+  }
+
+  // Otherwise treat it as a bare email address and add the site hostname
+  // as the display name.
+  if (hostname) {
+    return `${hostname} <${configuredFrom}>`;
+  }
+
+  return configuredFrom;
 }
 
 async function storeMessage(
@@ -257,8 +258,6 @@ async function storeMessage(
     console.error("KV write failed", error);
     return undefined;
   }
-
-  return undefined;
 }
 
 function acceptsHtml(request: Request) {

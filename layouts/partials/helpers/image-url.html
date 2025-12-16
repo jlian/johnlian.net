@@ -1,6 +1,7 @@
 {{- $path := trim .path "/" -}}
-{{- $webp := replaceRE "\\.[^.]+$" ".webp" $path -}}
-{{- if fileExists (printf "static/%s" $webp) -}}
-  {{- $path = $webp -}}
-{{- end -}}
-{{- printf "/%s" $path | relURL -}}
+{{- $page := .page -}}
+{{- $scratch := newScratch -}}
+{{- partial "helpers/resource-image.html" (dict "path" $path "page" $page "scratch" $scratch) -}}
+{{- $imgUrl := $scratch.Get "img" -}}
+{{- $webpUrl := $scratch.Get "webp" -}}
+{{- cond (ne ($webpUrl | default "") "") $webpUrl $imgUrl -}}

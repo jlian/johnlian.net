@@ -1,0 +1,26 @@
+{{- $path := trim .path "/" -}}
+{{- $page := .page -}}
+{{- $size := .size | default "2500x q75" -}}
+{{- $scratch := .scratch | default (newScratch) -}}
+
+{{- $imgUrl := printf "/%s" $path | relURL -}}
+{{- $webpUrl := "" -}}
+
+{{- with $page -}}
+  {{- with .Resources.GetMatch $path -}}
+    {{- $img := .Resize $size -}}
+    {{- $webp := .Resize (printf "%s webp" $size) -}}
+    {{- $imgUrl = $img.RelPermalink -}}
+    {{- $webpUrl = $webp.RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if not $webpUrl -}}
+  {{- $webpPath := replaceRE "\\.[^.]+$" ".webp" $path -}}
+  {{- if fileExists (printf "static/%s" $webpPath) -}}
+    {{- $webpUrl = printf "/%s" $webpPath | relURL -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $scratch.Set "img" $imgUrl -}}
+{{- $scratch.Set "webp" $webpUrl -}}

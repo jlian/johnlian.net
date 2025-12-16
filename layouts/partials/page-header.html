@@ -3,7 +3,7 @@
 {{ $.Scratch.Add "text_color" "" }}
 
 {{ if $featured_image }}
-  {{ $featuredUrl := partial "helpers/image-url.html" (dict "path" $featured_image) }}
+  {{ $featuredUrl := partial "helpers/image-url.html" (dict "path" $featured_image "page" .) }}
   {{ $bgStyle := printf "background-position:center; background-repeat:no-repeat; background-size:cover; background-image:url('%s');" $featuredUrl }}
   {{ $.Scratch.Set "transparency" "bg-black-50" }}
   {{ $.Scratch.Set "text_color" "white-80" }}

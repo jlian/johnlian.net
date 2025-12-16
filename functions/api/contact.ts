@@ -136,10 +136,12 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
 
 async function validateTurnstile(token: string, secret: string | undefined, request: Request) {
   if (!token) {
+    console.warn("Turnstile token missing");
     return { ok: false, valid: false, message: "Captcha required" };
   }
 
   if (!secret) {
+    console.error("TURNSTILE_SECRET_KEY not configured");
     return { ok: false, valid: false, message: "Captcha validation unavailable" };
   }
 
@@ -155,11 +157,19 @@ async function validateTurnstile(token: string, secret: string | undefined, requ
   });
 
   if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    console.error("Turnstile verification HTTP failure", {
+      status: response.status,
+      body: text ? text.slice(0, 500) : "",
+    });
     return { ok: false, valid: false, message: "Captcha validation failed" };
   }
 
-  const verification = (await response.json()) as { success?: boolean };
+  const verification = (await response.json()) as { success?: boolean; ["error-codes"]?: string[] };
   if (!verification.success) {
+    console.error("Turnstile verification rejected", {
+      errors: verification["error-codes"],
+    });
     return { ok: false, valid: false, message: "Captcha verification failed" };
   }
 

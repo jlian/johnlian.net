@@ -7,25 +7,25 @@ tags:
 - wiring
 - cable management
 - hdmi
-featured_image: "/images/posts/media-closet/01-closet-overview.jpg"
+featured_image: "01-closet-overview.jpg"
 description: "Closet glow-up full of patch panels, storage hacks, and before/after."
 ---
 
 One closet to house all our networking and media equipment. Most of the hard work was done by the previous owner with the CAT6, HDMI, and speaker wires all in wall.
 
-![One closet to house all our networking and media equipment. Most of the hard work was done by the previous owner with the CAT6, HDMI, and speaker wires all in wall.](/images/posts/media-closet/01-closet-overview.jpg)
+![One closet to house all our networking and media equipment. Most of the hard work was done by the previous owner with the CAT6, HDMI, and speaker wires all in wall.](01-closet-overview.jpg)
 
 Here’s the network panel close up. I'm not super stoked about putting my eero gateway in here to act as the router but currently not sure what to upgrade to. Suggestions welcome.
 
-![Network panel close up. I'm not super stoked about putting my eero gateway in here to act as the router but currently not sure what to upgrade to. Suggestions welcome.](/images/posts/media-closet/02-network-panel.jpg)
+![Network panel close up. I'm not super stoked about putting my eero gateway in here to act as the router but currently not sure what to upgrade to. Suggestions welcome.](02-network-panel.jpg)
 
 View of tools peg board (IKEA) and spare cable storage (shoe organizer from Amazon).
 
-![View of tools peg board (IKEA) and spare cable storage (shoe organizer from Amazon)](/images/posts/media-closet/03-pegboard-storage.jpg)
+![View of tools peg board (IKEA) and spare cable storage (shoe organizer from Amazon)](03-pegboard-storage.jpg)
 
 Living room (behind the TV). A bunch of stuff here for Philips Hue backlight syncing + HDMI 2.1 compatibility.
 
-![Living room (behind the TV). A bunch of stuff here for Philips Hue backlight syncing + HDMI 2.1 compatibility. More info in the diagram.](/images/posts/media-closet/04-living-room.jpg)
+![Living room (behind the TV). A bunch of stuff here for Philips Hue backlight syncing + HDMI 2.1 compatibility. More info in the diagram.](04-living-room.jpg)
 
 Detailed diagram of the wiring:
 
@@ -103,10 +103,10 @@ flowchart LR
 
 Can't see the wires when the TV is mounted:
 
-![Can't see the wires when the TV is mounted](/images/posts/media-closet/05-hidden-wires.jpg)
+![Can't see the wires when the TV is mounted](05-hidden-wires.jpg)
 
 Bonus: before the cleanup:
 
-![Bonus: before the cleanup](/images/posts/media-closet/06-before-cleanup.jpg)
+![Bonus: before the cleanup](06-before-cleanup.jpg)
 
 [*Join the discussion on /r/HomeNetworking*](https://www.reddit.com/r/HomeNetworking/comments/zwvia0/cleaned_up_the_networkmedia_closet/).

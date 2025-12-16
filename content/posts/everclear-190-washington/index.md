@@ -5,7 +5,7 @@ tags:
 - seattle
 - curiosities
 - liquor
-featured_image: "/images/posts/everclear-190-wa/everclear-total-wine.jpg"
+featured_image: "everclear-total-wine.jpg"
 description: "Liquor-store scavenger hunt proving Everclear 190 is secretly legal in WA."
 ---
 
@@ -15,7 +15,7 @@ Open and shut case, right? Not really. You can [order it for pickup straight fro
 
 Curious about this discrepancy, I go to Interbay Total Wine to verify. It’s right there, next to a bunch of other high-proof liquors, at "Aisle 04, Left, Bay 26" just like the website says.
 
-![Potato quality photo of Everclear 190 at Total Wine Interbay](/images/posts/everclear-190-wa/everclear-total-wine.jpg)
+![Potato quality photo of Everclear 190 at Total Wine Interbay](everclear-total-wine.jpg)
 
 At this point I'm invested. The checkout is just the normal ID process. No special permit or anything.
 
@@ -25,17 +25,17 @@ I use the [RCW search tool](https://search.leg.wa.gov/search.aspx#document&searc
 
 Unfortunately I'm completely hooked now. I email the LCB, but haven't received a response. I ask ChatGPT and it kept giving me convincing-sounding but false information before eventually conceding that there seems to be no law/regulation on this (lol). Here's the full conversation:
 
-![ChatGPT initially insisting Everclear 190 is illegal in WA](/images/posts/everclear-190-wa/chatgpt-1.png)
+![ChatGPT initially insisting Everclear 190 is illegal in WA](chatgpt-1.png)
 
-![Prompting ChatGPT with RCW citations that don't exist](/images/posts/everclear-190-wa/chatgpt-2.png)
+![Prompting ChatGPT with RCW citations that don't exist](chatgpt-2.png)
 
-![Conversation digressing into “industrial use” permit territory](/images/posts/everclear-190-wa/chatgpt-3.png)
+![Conversation digressing into “industrial use” permit territory](chatgpt-3.png)
 
-![More digging for RCW references and links](/images/posts/everclear-190-wa/chatgpt-4.png)
+![More digging for RCW references and links](chatgpt-4.png)
 
-![ChatGPT admitting it can’t find a real prohibition](/images/posts/everclear-190-wa/chatgpt-5.png)
+![ChatGPT admitting it can’t find a real prohibition](chatgpt-5.png)
 
-![Final concession that there might not be a ban after all](/images/posts/everclear-190-wa/chatgpt-6.png)
+![Final concession that there might not be a ban after all](chatgpt-6.png)
 
 So... Unless Total Wine is blatantly breaking the law, Everclear 190 must be legal in WA, right? If so, where's everyone getting that idea that it's illegal from? The PDF? Where's the law backing that?
 

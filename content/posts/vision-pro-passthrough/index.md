@@ -6,7 +6,7 @@ tags:
 - passthrough
 - xr
 - curiousities
-featured_image: "/images/posts/vision-pro-passthrough/vision-pro.jpeg"
+featured_image: "vision-pro.jpeg"
 description: "Cannot figure out Vision Pro’s passthrough feels good despite the math."
 ---
 

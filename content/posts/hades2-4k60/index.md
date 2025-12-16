@@ -6,7 +6,7 @@ tags:
 - nintendo switch 2
 - hades 2
 - hdmi
-featured_image: "/images/posts/hades2-4k60/switch-tv.jpg"
+featured_image: "switch-tv.jpg"
 description: "Probably the world's smallest deal but no one else figured this out I think?"
 ---
 

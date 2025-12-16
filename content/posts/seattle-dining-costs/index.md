@@ -6,7 +6,7 @@ tags:
 - dining
 - data
 - curiosities
-featured_image: "/images/posts/seattle-dining-costs/seattle.jpeg"
+featured_image: "seattle.jpeg"
 description: "I thought it was going to be top 10."
 ---
 

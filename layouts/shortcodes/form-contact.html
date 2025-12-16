@@ -1,6 +1,8 @@
 {{ $.Scratch.Add "labelClasses" "f6 b db mb1 mt3 sans-serif dark-gray" }}
 {{ $.Scratch.Add "inputClasses" "w-100 f5 pv3 ph3 bg-light-gray bn" }}
 {{ $turnstileSiteKey := .Get "turnstileSiteKey" }}
+{{ if eq $turnstileSiteKey ".Site.Params.turnstileSiteKey" }}{{ $turnstileSiteKey = "" }}{{ end }}
+{{ if not $turnstileSiteKey }}{{ $turnstileSiteKey = site.Params.turnstileSiteKey }}{{ end }}
 
 <div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2">
   Message sent. I’ll reply soon.

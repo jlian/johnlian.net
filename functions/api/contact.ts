@@ -106,6 +106,25 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     return Response.redirect(SUCCESS_REDIRECT, 303);
   } catch (err) {
     console.error("Unhandled exception in /api/contact", err);
+
+    const host = request.headers.get("host") || "";
+    const isPreviewHost = host.endsWith(".pages.dev");
+
+    // Avoid leaking secrets; only return minimal error details on preview hosts.
+    const message =
+      err instanceof Error
+        ? `${err.name}: ${err.message}${err.stack ? `\n${err.stack}` : ""}`
+        : String(err);
+
+    if (isPreviewHost) {
+      // Cap response size to avoid dumping huge stacks
+      const capped = message.slice(0, 2000);
+      return new Response(capped, {
+        status: 500,
+        headers: { "Content-Type": "text/plain; charset=UTF-8" },
+      });
+    }
+
     return new Response("Internal Server Error", { status: 500 });
   }
 };

@@ -6,8 +6,13 @@
 {{- $imgUrl := printf "/%s" $path | relURL -}}
 {{- $webpUrl := "" -}}
 
-{{- with $page -}}
-  {{- with .Resources.GetMatch $path -}}
+{{/* Try page resources first, then site-level resources */}}
+{{- $candidates := slice }}
+{{- with $page }}{{ $candidates = $candidates | append (.Resources.GetMatch $path) }}{{ end }}
+{{- $candidates = $candidates | append (resources.GetMatch $path) }}
+
+{{- range $candidates -}}
+  {{- with . -}}
     {{- if eq .MediaType.SubType "gif" -}}
       {{- $imgUrl = .RelPermalink -}}
       {{- $webpUrl = "" -}}
@@ -17,6 +22,7 @@
       {{- $imgUrl = $img.RelPermalink -}}
       {{- $webpUrl = $webp.RelPermalink -}}
     {{- end -}}
+    {{- break -}}
   {{- end -}}
 {{- end -}}
 

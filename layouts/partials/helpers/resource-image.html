@@ -1,6 +1,6 @@
 {{- $path := trim .path "/" -}}
 {{- $page := .page -}}
-{{- $size := .size | default "2500x q75" -}}
+{{- $size := .size | default "2500x q80" -}}
 {{- $scratch := .scratch | default (newScratch) -}}
 
 {{- $imgUrl := printf "/%s" $path | relURL -}}

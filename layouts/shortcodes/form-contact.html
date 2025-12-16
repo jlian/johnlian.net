@@ -1,6 +1,13 @@
 {{ $.Scratch.Add "labelClasses" "f6 b db mb1 mt3 sans-serif dark-gray" }}
 {{ $.Scratch.Add "inputClasses" "w-100 f5 pv3 ph3 bg-light-gray bn" }}
 
+<div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2">
+  Message sent. I’ll reply soon.
+</div>
+<div id="contact-error" class="dn pa3 mv3 bg-washed-red dark-red br2">
+  Something went wrong sending your message. Please try again later.
+</div>
+
 <form class="black-80 sans-serif" accept-charset="UTF-8" action="/api/contact" method="POST" role="form" name="contact">
 
     <label class="{{ $.Scratch.Get "labelClasses" }}"  for="name">Your Name</label>
@@ -19,3 +26,28 @@
     </div>
 
 </form>
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var success = document.getElementById("contact-success");
+    var error = document.getElementById("contact-error");
+
+    if (params.get("sent") === "1" && success) {
+      success.classList.remove("dn");
+      success.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (params.get("error") === "1" && error) {
+      error.classList.remove("dn");
+      error.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      return;
+    }
+
+    params.delete("sent");
+    params.delete("error");
+    var newUrl =
+      window.location.pathname +
+      (params.toString() ? "?" + params.toString() : "") +
+      window.location.hash;
+    history.replaceState({}, "", newUrl);
+  })();
+</script>

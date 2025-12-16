@@ -10,10 +10,12 @@ type Env = {
   CONTACT_TO_EMAIL?: string;
   CONTACT_FROM_EMAIL?: string;
   CONTACT_MESSAGES?: KVNamespace;
+  CONTACT_DEBUG?: string;
 };
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const SUCCESS_REDIRECT = "/about/?sent=1";
+const ERROR_REDIRECT = "/about/?error=1";
 
 export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method !== "POST") {
@@ -100,7 +102,9 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     }
 
     if (!emailStatus.ok) {
-      return new Response(emailStatus.message, { status: 500 });
+      console.error("Email send failed", { status: emailStatus.status, message: emailStatus.message });
+      const errorRedirect = new URL(ERROR_REDIRECT, request.url).toString();
+      return Response.redirect(errorRedirect, 303);
     }
 
     const redirectUrl = new URL(SUCCESS_REDIRECT, request.url).toString();
@@ -108,17 +112,12 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   } catch (err) {
     console.error("Unhandled exception in /api/contact", err);
 
-    const host = request.headers.get("host") || "";
-    const isPreviewHost = host.endsWith(".pages.dev");
-
-    // Avoid leaking secrets; only return minimal error details on preview hosts.
-    const message =
-      err instanceof Error
-        ? `${err.name}: ${err.message}${err.stack ? `\n${err.stack}` : ""}`
-        : String(err);
-
-    if (isPreviewHost) {
-      // Cap response size to avoid dumping huge stacks
+    const debug = env.CONTACT_DEBUG === "1";
+    if (debug) {
+      const message =
+        err instanceof Error
+          ? `${err.name}: ${err.message}${err.stack ? `\n${err.stack}` : ""}`
+          : String(err);
       const capped = message.slice(0, 2000);
       return new Response(capped, {
         status: 500,
@@ -126,7 +125,12 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       });
     }
 
-    return new Response("Internal Server Error", { status: 500 });
+    if (acceptsHtml(request)) {
+      const errorRedirect = new URL(ERROR_REDIRECT, request.url).toString();
+      return Response.redirect(errorRedirect, 303);
+    }
+
+    return new Response("Internal Server Error", { status: 500, headers: { "Content-Type": "text/plain; charset=UTF-8" } });
   }
 };
 
@@ -245,4 +249,9 @@ async function storeMessage(
   }
 
   return undefined;
+}
+
+function acceptsHtml(request: Request) {
+  const accept = request.headers.get("accept") || "";
+  return accept.includes("text/html");
 }

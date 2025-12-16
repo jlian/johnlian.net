@@ -2,5 +2,5 @@
 title: "Posts"
 tags:
 - posts
-featured_image: "/images/cave.jpg"
+featured_image: "cave.jpg"
 ---

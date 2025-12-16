@@ -29,4 +29,4 @@ See my [resume](/resume/JohnLianCV.pdf).
 
 If there's one thing I'm addicted to, it's emails.
 
-{{< form-contact >}}
+{{< form-contact turnstileSiteKey=.Site.Params.turnstileSiteKey >}}

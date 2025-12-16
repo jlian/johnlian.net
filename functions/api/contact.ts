@@ -136,7 +136,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
 
 async function validateTurnstile(token: string, secret: string | undefined, request: Request) {
   if (!token) {
-    return { ok: true, valid: false, message: "" };
+    return { ok: false, valid: false, message: "Captcha required" };
   }
 
   if (!secret) {

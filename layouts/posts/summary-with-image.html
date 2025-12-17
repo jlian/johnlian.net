@@ -5,21 +5,24 @@
 {{ $imgUrl := $scratch.Get "img" }}
 {{ $webpUrl := $scratch.Get "webp" }}
 {{ $isLCP := .Scratch.Get "isLCP" | default false }}
+{{ $imgAlt := .Title }}
+{{ with .Params.featured_image_alt }}{{ $imgAlt = . }}{{ end }}
 <div class="mid-gray overflow-hidden pv3">
   <div class="flex flex-column">
     <div class="mb3 w-100">
       <a href="{{ .RelPermalink }}" class="db dim aspect-ratio aspect-ratio--16x9">
-        <div class="img aspect-ratio--object overflow-hidden" style="position:absolute; inset:0;">
-          <picture style="display:block; width:100%; height:100%;">
+        <div class="img aspect-ratio--object overflow-hidden">
+          <picture class="absolute absolute--fill w-100 h-100">
             {{ with $webpUrl }}
               <source type="image/webp" srcset="{{ . }}">
             {{ end }}
             <img
               src="{{ $imgUrl }}"
-              alt=""
+              alt="{{ $imgAlt }}"
               decoding="async"
               {{ if $isLCP }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}
-              style="display:block; width:100%; height:100%; object-fit:cover; object-position:center;"
+              class="db w-100 h-100"
+              style="object-fit:cover; object-position:center;"
             >
           </picture>
         </div>

@@ -1,15 +1,16 @@
 {{ $featured_image := .Param "featured_image" | default "images/seattle.jpg" }}
 {{ $featuredUrl := partial "helpers/image-url.html" (dict "path" $featured_image "page" .) }}
-<header class="cover bg-top" style="position:relative; overflow:hidden;">
+<header class="cover bg-top relative overflow-hidden">
   <img
     src="{{ $featuredUrl }}"
-    alt=""
+    alt="{{ .Params.featured_image_alt | default (.Title | default .Site.Title) }}"
     loading="eager"
     fetchpriority="high"
     decoding="async"
-    style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0;"
+    class="absolute absolute--fill w-100 h-100 z-0"
+    style="object-fit:cover; object-position:center;"
   >
-  <div class="bg-black-20" style="position:relative; z-index:1;">
+  <div class="bg-black-20 relative z-1">
     {{ partial "site-navigation.html" .}}
     <div class="site-width tc-ns pv3 pv5-m pv6-l ph3">
       <h1 class="f2 f-subheadline-m f-headline-l measure-narrow lh-title mv0">

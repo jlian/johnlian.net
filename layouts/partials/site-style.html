@@ -17,7 +17,7 @@
   {{ else }}
     {{/* Otherwise, load it without blocking initial render */}}
     {{ $href := urls.RelURL (.) }}
-    <link rel="preload" href="{{ $href }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="{{ $href }}" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="{{ $href }}"></noscript>
   {{ end }}
 {{ end }}

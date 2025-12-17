@@ -6,16 +6,17 @@
   {{ $featuredUrl := partial "helpers/image-url.html" (dict "path" $featured_image "page" .) }}
   {{ $.Scratch.Set "transparency" "bg-black-50" }}
   {{ $.Scratch.Set "text_color" "white-80" }}
-  <header class="cover bg-top" style="position:relative; overflow:hidden;">
+  <header class="cover bg-top relative overflow-hidden">
     <img
       src="{{ $featuredUrl }}"
-      alt=""
+      alt="{{ .Params.featured_image_alt | default .Title }}"
       loading="eager"
       fetchpriority="high"
       decoding="async"
-      style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0;"
+      class="absolute absolute--fill w-100 h-100 z-0"
+      style="object-fit:cover; object-position:center;"
     >
-    <div class="bg-black-20" style="position:relative; z-index:1;">
+    <div class="bg-black-20 relative z-1">
       <div>
         {{ partial "site-navigation.html" .}}
       </div>

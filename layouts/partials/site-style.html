@@ -1,0 +1,27 @@
+{{/*
+  Override Ananke's site-style partial to reduce render-blocking CSS.
+  Strategy:
+  - Preload styles
+  - Load stylesheets with media=print swap to avoid blocking render
+  - Provide noscript fallback
+*/}}
+
+{{ $styles := slice }}
+
+{{ with partials.IncludeCached "func/style/GetMainCSS.html" "style/GetMainCSS" }}
+  {{ $styles = $styles | append .RelPermalink }}
+{{ end }}
+
+{{ range site.Params.custom_css }}
+  {{ with partials.IncludeCached "func/style/GetResource.html" . . }}
+    {{ $styles = $styles | append .RelPermalink }}
+  {{ else }}
+    {{ $styles = $styles | append (urls.RelURL .) }}
+  {{ end }}
+{{ end }}
+
+{{ range $styles }}
+  <link rel="preload" href="{{ . }}" as="style">
+  <link rel="stylesheet" href="{{ . }}" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="{{ . }}"></noscript>
+{{ end }}

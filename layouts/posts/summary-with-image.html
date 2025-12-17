@@ -4,12 +4,29 @@
 {{ partial "helpers/resource-image.html" (dict "path" $rawImagePath "page" . "size" "2500x q80" "scratch" $scratch) }}
 {{ $imgUrl := $scratch.Get "img" }}
 {{ $webpUrl := $scratch.Get "webp" }}
-{{ $bgSource := cond (ne ($webpUrl | default "") "") $webpUrl $imgUrl }}
+{{ $imgW := $scratch.Get "width" | default 0 }}
+{{ $imgH := $scratch.Get "height" | default 0 }}
+{{ $isLcp := .Scratch.Get "lcp_image" | default false }}
+{{ $loading := cond $isLcp "eager" "lazy" }}
+{{ $fetch := cond $isLcp "high" "auto" }}
 <div class="mid-gray overflow-hidden pv3">
   <div class="flex flex-column">
     <div class="mb3 w-100">
       <a href="{{ .RelPermalink }}" class="db dim aspect-ratio aspect-ratio--16x9">
-        <div style="background: url('{{ $bgSource }}') center;" class="img aspect-ratio--object cover" alt="image from {{ .Title }}"></div>
+        <div class="img aspect-ratio--object overflow-hidden">
+          <picture>
+            {{ with $webpUrl }}<source type="image/webp" srcset="{{ . }}">{{ end }}
+            <img
+              src="{{ $imgUrl }}"
+              alt="{{ .Title }}"
+              loading="{{ $loading }}"
+              fetchpriority="{{ $fetch }}"
+              decoding="async"
+              style="width:100%;height:100%;object-fit:cover;"
+              {{ if and (gt $imgW 0) (gt $imgH 0) }}width="{{ $imgW }}" height="{{ $imgH }}"{{ end }}
+            >
+          </picture>
+        </div>
       </a>
     </div>
     <div class="w-100">

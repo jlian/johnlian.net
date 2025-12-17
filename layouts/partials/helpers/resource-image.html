@@ -5,6 +5,8 @@
 
 {{- $imgUrl := printf "/%s" $path | relURL -}}
 {{- $webpUrl := "" -}}
+{{- $imgWidth := 0 -}}
+{{- $imgHeight := 0 -}}
 
 {{/* Try page resources first, then site-level resources */}}
 {{- $candidates := slice }}
@@ -21,6 +23,8 @@
       {{- $webp := .Resize (printf "%s webp" $size) -}}
       {{- $imgUrl = $img.RelPermalink -}}
       {{- $webpUrl = $webp.RelPermalink -}}
+      {{- $imgWidth = $img.Width -}}
+      {{- $imgHeight = $img.Height -}}
     {{- end -}}
     {{- break -}}
   {{- end -}}
@@ -35,3 +39,5 @@
 
 {{- $scratch.Set "img" $imgUrl -}}
 {{- $scratch.Set "webp" $webpUrl -}}
+{{- $scratch.Set "width" $imgWidth -}}
+{{- $scratch.Set "height" $imgHeight -}}

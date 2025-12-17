@@ -4,7 +4,7 @@
    - Fall back to <link rel="stylesheet"> if a file isn't available locally.
 */}}
 
-{{ with partials.IncludeCached "func/style/GetMainCSS.html" "style/GetMainCSS" }}
+{{ with partialCached "func/style/GetMainCSS.html" . "style/GetMainCSS" }}
   <style>{{ .Content | safeCSS }}</style>
 {{ end }}
 
@@ -12,11 +12,11 @@
   {{ $path := strings.TrimLeft (strings.TrimSpace .) "/" }}
 
   {{/* If it's a Hugo resource (assets/page resource), inline it */}}
-  {{ with partials.IncludeCached "func/style/GetResource.html" . . }}
+  {{ with partialCached "func/style/GetResource.html" . . }}
     <style>{{ .Content | safeCSS }}</style>
   {{ else }}
     {{/* Otherwise, load it without blocking initial render */}}
-    {{ $href := urls.RelURL (.) }}
+    {{ $href := . | relURL }}
     <link rel="stylesheet" href="{{ $href }}" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="{{ $href }}"></noscript>
   {{ end }}

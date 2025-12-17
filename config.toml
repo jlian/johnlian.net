@@ -37,6 +37,7 @@ pygmentsCodefences = true
   default_featured_image = "/images/default-featured.jpg"
   recent_posts_number = 6
   mainSections = ["posts"]
+  turnstileSiteKey = "0x4AAAAAACHEJQAOcPYCZj8Y"
 
 [markup]
   [markup.goldmark]

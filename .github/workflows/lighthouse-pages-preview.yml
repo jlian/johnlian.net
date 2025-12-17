@@ -1,0 +1,86 @@
+name: Performance (Lighthouse on Pages Preview)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    # Avoid burning CI minutes on drafts.
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+
+    env:
+      # Required: set this repo variable to your Pages "*.pages.dev" subdomain.
+      # Example: if production is https://user-example.pages.dev, set CF_PAGES_SUBDOMAIN=user-example
+      CF_PAGES_SUBDOMAIN: ${{ vars.CF_PAGES_SUBDOMAIN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve Pages preview URL
+        id: pages
+        shell: bash
+        run: |
+          if [[ -z "${CF_PAGES_SUBDOMAIN}" ]]; then
+            echo "Missing repo variable CF_PAGES_SUBDOMAIN (the Pages *.pages.dev subdomain)." >&2
+            exit 1
+          fi
+
+          # Cloudflare Pages creates a stable alias per branch:
+          # - lowercased
+          # - non-alphanumeric replaced with '-'
+          # Docs: https://developers.cloudflare.com/pages/configuration/preview-deployments/#preview-aliases
+          raw_branch="${GITHUB_HEAD_REF}"
+          branch_alias=$(echo "${raw_branch}" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
+
+          if [[ -z "${branch_alias}" ]]; then
+            echo "Could not derive branch alias from GITHUB_HEAD_REF='${raw_branch}'" >&2
+            exit 1
+          fi
+
+          url="https://${branch_alias}.${CF_PAGES_SUBDOMAIN}.pages.dev/"
+          echo "url=${url}" >> "$GITHUB_OUTPUT"
+          echo "Using preview URL: ${url}"
+
+      - name: Wait for preview deployment to be live
+        shell: bash
+        run: |
+          url="${{ steps.pages.outputs.url }}"
+
+          # Wait up to ~10 minutes for Pages to finish deploying.
+          for i in $(seq 1 60); do
+            if curl -fsSIL --max-time 10 "${url}" >/dev/null; then
+              echo "Preview is reachable: ${url}"
+              exit 0
+            fi
+            echo "Preview not reachable yet (${i}/60). Waiting 10s…"
+            sleep 10
+          done
+
+          echo "Timed out waiting for preview to become reachable: ${url}" >&2
+          exit 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+
+      - name: Run Lighthouse CI
+        env:
+          URL: ${{ steps.pages.outputs.url }}
+        run: |
+          lhci autorun \
+            --collect.url="$URL" \
+            --collect.numberOfRuns=3 \
+            --upload.target=temporary-public-storage \
+            --assert.preset=lighthouse:recommended

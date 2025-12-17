@@ -1,9 +1,9 @@
 <footer class="pa4 site-footer site-width" role="contentinfo">
   <div class="flex flex-column-reverse flex-row-ns items-center justify-between o-60">
-    <a class="f6">
+    <a href="{{ "/" | absURL }}" class="f6 link dim copyright-link">
       &copy; {{ now.Format "2006" }} {{ .Site.Title }}
     </a>
-    <div class="items-center">
+    <div class="items-center flex flex-wrap justify-center">
       {{ partial "social-follow.html" . }}
     </div>
   </div>

@@ -1,0 +1,37 @@
+{{- $path := trim .path "/" -}}
+{{- $page := .page -}}
+{{- $size := .size | default "2500x q80" -}}
+{{- $scratch := .scratch | default (newScratch) -}}
+
+{{- $imgUrl := printf "/%s" $path | relURL -}}
+{{- $webpUrl := "" -}}
+
+{{/* Try page resources first, then site-level resources */}}
+{{- $candidates := slice }}
+{{- with $page }}{{ $candidates = $candidates | append (.Resources.GetMatch $path) }}{{ end }}
+{{- $candidates = $candidates | append (resources.GetMatch $path) }}
+
+{{- range $candidates -}}
+  {{- with . -}}
+    {{- if eq .MediaType.SubType "gif" -}}
+      {{- $imgUrl = .RelPermalink -}}
+      {{- $webpUrl = "" -}}
+    {{- else -}}
+      {{- $img := .Resize $size -}}
+      {{- $webp := .Resize (printf "%s webp" $size) -}}
+      {{- $imgUrl = $img.RelPermalink -}}
+      {{- $webpUrl = $webp.RelPermalink -}}
+    {{- end -}}
+    {{- break -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if not $webpUrl -}}
+  {{- $webpPath := replaceRE "\\.[^.]+$" ".webp" $path -}}
+  {{- if fileExists (printf "static/%s" $webpPath) -}}
+    {{- $webpUrl = printf "/%s" $webpPath | relURL -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $scratch.Set "img" $imgUrl -}}
+{{- $scratch.Set "webp" $webpUrl -}}

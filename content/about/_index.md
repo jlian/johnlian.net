@@ -1,7 +1,7 @@
 ---
 title: "About"
 date: 2018-02-21T20:59:39-08:00
-featured_image: "/images/about/about.jpeg"
+featured_image: "about.jpeg"
 ---
 
 I’m a product manager at Microsoft helping devices talk to the cloud:

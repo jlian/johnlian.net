@@ -1,0 +1,15 @@
+{{- $dest := strings.TrimPrefix "/" .Destination -}}
+{{- $dest = strings.TrimPrefix "./" $dest -}}
+{{- $scratch := newScratch -}}
+{{- partial "helpers/resource-image.html" (dict "path" $dest "page" .Page "scratch" $scratch) -}}
+{{- $imgSrc := $scratch.Get "img" -}}
+{{- $webpSrc := $scratch.Get "webp" -}}
+
+{{- if $webpSrc | default "" -}}
+<picture>
+  <source srcset="{{ $webpSrc }}" type="image/webp">
+  <img src="{{ $imgSrc }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy">
+</picture>
+{{- else -}}
+<img src="{{ $imgSrc }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy">
+{{- end -}}

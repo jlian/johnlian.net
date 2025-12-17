@@ -1,4 +1,4 @@
-baseURL = "https://johnspecificproblems.net/"
+baseURL = "https://johnlian.net/"
 min_version = "0.152.2"
 languageCode = "en-us"
 title = "John Lian"
@@ -22,6 +22,7 @@ pygmentsCodefences = true
 [params]
   custom_css = ["css/style.css"]
   favicon = "/favicon.ico"
+  theme_color = "#ed1d24"
   description = "John Lian's personal website"
   wikipedia = "https://en.wikipedia.org/wiki/User:Lianguanlun"
   github = "https://github.com/jlian"
@@ -36,6 +37,7 @@ pygmentsCodefences = true
   default_featured_image = "/images/default-featured.jpg"
   recent_posts_number = 6
   mainSections = ["posts"]
+  turnstileSiteKey = "0x4AAAAAACHEJQAOcPYCZj8Y"
 
 [markup]
   [markup.goldmark]

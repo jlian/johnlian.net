@@ -1,7 +1,6 @@
 {{ $featured_image := .Param "featured_image" | default "images/seattle.jpg" }}
-  {{/* Trimming the slash and adding absURL make sure the image works no matter where our site lives */}}
-  {{ $featured_image := (trim $featured_image "/") | absURL }}
-<header class="cover bg-top" style="background: url('{{ $featured_image }}') center;">
+{{ $featuredUrl := partial "helpers/image-url.html" (dict "path" $featured_image "page" .) }}
+<header class="cover bg-top" style="background-image:url('{{ $featuredUrl }}'); background-position:center; background-repeat:no-repeat; background-size:cover;">
   <div class="bg-black-20">
     {{ partial "site-navigation.html" .}}
     <div class="site-width tc-ns pv3 pv5-m pv6-l ph3">
@@ -10,11 +9,6 @@
           {{ .Title | default .Site.Title }}
         </span>
       </h1>
-      {{ with .Params.description }}
-        <h2 class="fw1 f5 f3-l white-80 measure-wide-ns center mt3">
-          {{ . }}
-        </h2>
-      {{ end }}
     </div>
   </div>
 </header>

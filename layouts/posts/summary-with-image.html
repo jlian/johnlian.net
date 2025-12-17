@@ -1,11 +1,15 @@
 {{ $paramDefault := .Site.Params.default_featured_image | default "images/default-featured.jpg" }}
 {{ $rawImagePath := .Params.featured_image | default $paramDefault }}
-{{ $featured_image := (trim $rawImagePath "/") | absURL }}
+{{ $scratch := newScratch }}
+{{ partial "helpers/resource-image.html" (dict "path" $rawImagePath "page" . "size" "2500x q80" "scratch" $scratch) }}
+{{ $imgUrl := $scratch.Get "img" }}
+{{ $webpUrl := $scratch.Get "webp" }}
+{{ $bgSource := cond (ne ($webpUrl | default "") "") $webpUrl $imgUrl }}
 <div class="mid-gray overflow-hidden pv3">
   <div class="flex flex-column">
     <div class="mb3 w-100">
       <a href="{{ .RelPermalink }}" class="db dim aspect-ratio aspect-ratio--16x9">
-        <div style="background: url('{{ $featured_image }}') center;" class="img aspect-ratio--object cover" alt="image from {{ .Title }}"></div>
+        <div style="background: url('{{ $bgSource }}') center;" class="img aspect-ratio--object cover" alt="image from {{ .Title }}"></div>
       </a>
     </div>
     <div class="w-100">

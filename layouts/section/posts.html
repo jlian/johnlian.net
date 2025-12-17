@@ -2,9 +2,10 @@
   <article class="site-width pv3 nested-copy-line-height nested-img">
     {{ $section := .Paginate (where .Data.Pages "Section" .Section) }}
     <section class="posts-grid mt4">
-      {{ range  $section.Pages }}
+      {{ range $i, $p := $section.Pages }}
         <div class="post-card">
-          {{ .Render "summary-with-image" }}
+          {{ $p.Scratch.Set "isLCP" (eq $i 0) }}
+          {{ $p.Render "summary-with-image" }}
         </div>
       {{ end }}
     </section>

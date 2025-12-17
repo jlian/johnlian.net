@@ -1,0 +1,23 @@
+{{/* Override theme site-style.html to reduce render-blocking CSS.
+   - Inline the theme's generated main CSS.
+   - Inline local static custom CSS files when possible.
+   - Fall back to <link rel="stylesheet"> if a file isn't available locally.
+*/}}
+
+{{ with partials.IncludeCached "func/style/GetMainCSS.html" "style/GetMainCSS" }}
+  <style>{{ .Content | safeCSS }}</style>
+{{ end }}
+
+{{ range site.Params.custom_css }}
+  {{ $path := strings.TrimLeft (strings.TrimSpace .) "/" }}
+
+  {{/* If it's a Hugo resource (assets/page resource), inline it */}}
+  {{ with partials.IncludeCached "func/style/GetResource.html" . . }}
+    <style>{{ .Content | safeCSS }}</style>
+  {{ else }}
+    {{/* Otherwise, load it without blocking initial render */}}
+    {{ $href := urls.RelURL (.) }}
+    <link rel="preload" href="{{ $href }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $href }}"></noscript>
+  {{ end }}
+{{ end }}

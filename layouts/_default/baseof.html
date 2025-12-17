@@ -19,6 +19,26 @@
     {{- $desc := .Params.description | default .Site.Params.description -}}
     {{ with $desc }}<meta name="description" content="{{ . }}">{{ end }}
     <link rel="canonical" href="{{ .Permalink }}">
+
+    {{/* Hint the browser to fetch the likely LCP image earlier */}}
+    {{- $lcpImage := "" -}}
+    {{- if .IsHome -}}
+      {{- $path := .Param "featured_image" | default "images/seattle.jpg" -}}
+      {{- $lcpImage = partial "helpers/image-url.html" (dict "path" $path "page" .) -}}
+    {{- else if .IsPage -}}
+      {{- with .Params.featured_image -}}
+        {{- $lcpImage = partial "helpers/image-url.html" (dict "path" . "page" $) -}}
+      {{- end -}}
+    {{- else if or .IsSection (eq .Kind "taxonomy") (eq .Kind "term") -}}
+      {{- $pages := .Pages -}}
+      {{- with index (first 1 $pages) 0 -}}
+        {{- $path := .Params.featured_image | default ($.Site.Params.default_featured_image | default "images/default-featured.jpg") -}}
+        {{- $lcpImage = partial "helpers/image-url.html" (dict "path" $path "page" .) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- with $lcpImage -}}
+      <link rel="preload" as="image" href="{{ . }}" fetchpriority="high">
+    {{- end -}}
     {{ if .IsHome }}
       {{- $base := "/" | absURL | strings.TrimRight "/" -}}
       {{- $image := "/images/bio-photo.jpg" | absURL -}}

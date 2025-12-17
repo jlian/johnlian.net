@@ -173,7 +173,7 @@ async function sendEmail(
   const body = {
     from: fromHeader,
     to: [toValue],
-    subject: `New contact form message from ${payload.name}`,
+    subject: `New contact form message from: ${payload.name}`,
     text: `Name:\n${payload.name}\n\nEmail Address:\n${payload.email}\n\nMessage:\n${payload.message}`,
     reply_to: payload.email,
   };

@@ -43,7 +43,9 @@ To set it up:
 
 3. Hold **Fn** to register it (the frame will flash to confirm)
 
-4. Assign **Reg. AF Area+AF On** to your preferred button: MENU → {{< icon "sony-icon-setup.svg" >}} (Setup) → [Operation Customize] → [{{< icon "sony-icon-still.svg" >}} Custom Key/Dial Set.] → select your key (I use AF-ON) → [Reg. AF Area+AF On]
+4. Assign **Reg. AF Area+AF On** to your preferred button: MENU → {{< icon "sony-icon-setup.svg" >}} (Setup) → [Operation Customize] → [{{< icon "sony-icon-still.svg" >}} Custom Key/Dial Set.] → Select a button like **AF-ON**[^button] → [Reg. AF Area+AF On]
+
+[^button]: The AF-ON button is great for this: it’s already ergonomically placed for back-button focusing, and using it as “track this” feels like a natural extension, no extra mental overhead. ![The AF-ON button](button.png)
 
 The **Reg. AF Area+AF On** variant is *key*. Sony [offers multiple recall options](https://helpguide.sony.net/ilc/2320/v1/en/contents/0405L_reg_af_area.html): **Regist. AF Area hold** and **Regist. AF Area tggle** [sic] just switch your focus area temporarily, while **Reg. AF Area+AF On** *also* initiates autofocus (and thus tracking via **Tracking: Expand Spot**). The latter is what makes this a true "bird button" - one press to both recall the area and start tracking.
 

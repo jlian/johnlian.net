@@ -11,7 +11,7 @@ featured_image: "bird-in-branches.jpeg"
 description: "Focus-and-recompose, but with real-time tracking"
 ---
 
-The Sony α6700's subject recognition feels magical until the bird is small in frame or the background is busy. Then "Wide + Bird" starts looking like a coin flip. If you've been frustrated by this, you're [not alone](https://www.reddit.com/r/SonyAlpha/comments/1ppwmfh/need_some_help_with_autofocus_a6700/).
+The Sony α6700's subject recognition feels magical until the bird is small in frame or the background is busy. Then "Wide + Bird" starts looking like a coin flip. If you've been frustrated by this, you're not alone.
 
 The fix: stop asking the camera to *find* the subject and start *telling* it where to begin.
 

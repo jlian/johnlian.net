@@ -8,7 +8,7 @@ tags:
 - birds
 - wildlife
 featured_image: "bird-in-branches.jpeg"
-description: "Focus-and-recompose, but with real-time tracking"
+description: "Focus-and-recompose, but with real-time tracking."
 ---
 
 The Sony α6700's subject recognition feels magical until the bird is small in frame or the background is busy. Then "Wide + Bird" starts looking like a coin flip. If you've been frustrated by this, you're not alone[^reddit].

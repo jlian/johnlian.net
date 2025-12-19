@@ -13,6 +13,14 @@
   box-decoration-break: clone;
 }
 
+/* Safari: negative letter-spacing (-0.05em) clips the last character;
+   add extra right padding on top of the existing pa1 (0.25rem) */
+@supports (-webkit-hyphens: none) {
+  .pa1.tracked-tight {
+    padding-right: calc(0.25rem + 0.05em);
+  }
+}
+
 @media (min-width: 30rem) {
   .site-width {
     padding-left: 1.5rem;

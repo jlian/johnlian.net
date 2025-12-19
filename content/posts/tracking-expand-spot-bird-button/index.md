@@ -1,5 +1,5 @@
 ---
-title: "Stop missing focus: a one-button Sony α6700 AF trick"
+title: "Stop missing focus with this one-button trick for Sony α6700"
 date: 2025-12-18T09:00:00-08:00
 tags:
 - photography
@@ -8,7 +8,7 @@ tags:
 - birds
 - wildlife
 featured_image: "bird-in-branches.jpeg"
-description: "Focus-and-recompose, but with real-time tracking."
+description: "DOCTORS HATE HIM! With this one weird trick, you can focus and recompose with subject tracking. Learn the truth now!"
 ---
 
 The Sony α6700's subject recognition feels magical until the bird is small in frame or the background is busy. Then "Wide + Bird" starts looking like a coin flip. If you've been frustrated by this, you're not alone[^reddit].

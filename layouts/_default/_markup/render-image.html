@@ -1,15 +1,28 @@
+{{/*
+Markdown image render hook with webp processing and caption support.
+Usage: ![Alt text](image.jpg "Caption text")
+The title (text in quotes) becomes the caption.
+*/}}
 {{- $dest := strings.TrimPrefix "/" .Destination -}}
 {{- $dest = strings.TrimPrefix "./" $dest -}}
 {{- $scratch := newScratch -}}
 {{- partial "helpers/resource-image.html" (dict "path" $dest "page" .Page "scratch" $scratch) -}}
 {{- $imgSrc := $scratch.Get "img" -}}
 {{- $webpSrc := $scratch.Get "webp" -}}
+{{- $caption := .Title -}}
 
+{{- if $caption -}}
+<figure class="tc">
+{{- end -}}
 {{- if $webpSrc | default "" -}}
 <picture>
   <source srcset="{{ $webpSrc }}" type="image/webp">
-  <img src="{{ $imgSrc }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy">
+  <img src="{{ $imgSrc }}" alt="{{ .Text }}" loading="lazy"{{ if $caption }} class="w-100"{{ end }}>
 </picture>
 {{- else -}}
-<img src="{{ $imgSrc }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy">
+<img src="{{ $imgSrc }}" alt="{{ .Text }}" loading="lazy"{{ if $caption }} class="w-100"{{ end }}>
+{{- end -}}
+{{- if $caption -}}
+<figcaption class="f6 gray tc mt2">{{ $caption }}</figcaption>
+</figure>
 {{- end -}}

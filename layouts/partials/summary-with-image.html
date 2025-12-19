@@ -1,7 +1,7 @@
 {{ $paramDefault := .Site.Params.default_featured_image | default "images/default-featured.jpg" }}
 {{ $rawImagePath := .Params.featured_image | default $paramDefault }}
 {{ $scratch := newScratch }}
-{{ partial "helpers/resource-image.html" (dict "path" $rawImagePath "page" . "size" "2500x q80" "scratch" $scratch) }}
+{{ partial "helpers/resource-image.html" (dict "path" $rawImagePath "page" . "size" "2500x" "scratch" $scratch) }}
 {{ $imgUrl := $scratch.Get "img" }}
 {{ $webpUrl := $scratch.Get "webp" }}
 {{ $bgSource := cond (ne ($webpUrl | default "") "") $webpUrl $imgUrl }}
@@ -17,7 +17,7 @@
                       {{ .Date.Format "January 2, 2006" }}
                     </time>
                     <h1 class="f3 measure-narrow lh-title mv0">
-                      <span class="bg-black-50 lh-copy white pa1 tracked-tight sans-serif">
+                      <span class="bg-black-50 box-decoration-clone lh-copy white pa1 tracked-tight sans-serif">
                         {{ .Title | default .Site.Title }}
                       </span>
                     </h1>

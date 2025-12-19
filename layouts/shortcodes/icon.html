@@ -3,9 +3,9 @@
 {{- if $resource -}}
 {{- $isSvg := eq $resource.MediaType.SubType "svg" -}}
 {{- if $isSvg -}}
-<span class="inline-icon" style="display:inline-flex;align-items:center;height:1em;vertical-align:middle">{{ $resource.Content | safeHTML }}</span>
+<span class="inline-icon">{{ $resource.Content | safeHTML }}</span>
 {{- else -}}
-<img class="inline-icon" src="{{ $resource.RelPermalink }}" alt="" style="height:1em;width:auto;vertical-align:middle;display:inline-block" loading="lazy" decoding="async">
+<span class="inline-icon"><img src="{{ $resource.RelPermalink }}" alt="" loading="lazy" decoding="async"></span>
 {{- end -}}
 {{- else -}}
 {{- errorf "Icon not found: %s" $src -}}

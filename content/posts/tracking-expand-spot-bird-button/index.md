@@ -1,5 +1,5 @@
 ---
-title: "Stop missing focus: a one-button Sony α6700 AF trick"
+title: "Stop missing focus with this one-button trick for Sony α6700"
 date: 2025-12-18T09:00:00-08:00
 tags:
 - photography
@@ -8,10 +8,12 @@ tags:
 - birds
 - wildlife
 featured_image: "bird-in-branches.jpeg"
-description: "Focus-and-recompose, but with real-time tracking"
+description: "PHOTOGRAPHERS HATE HIM! With this one weird trick, local man can focus and recompose with subject tracking. Learn the truth now!"
 ---
 
-The Sony α6700's subject recognition feels magical until the bird is small in frame or the background is busy. Then "Wide + Bird" starts looking like a coin flip. If you've been frustrated by this, you're not alone.
+The Sony α6700's subject recognition feels magical until the bird is small in frame or the background is busy. Then "Wide + Bird" starts looking like a coin flip. If you've been frustrated by this, you're not alone[^reddit].
+
+[^reddit]: Although I've been using this trick for a while, I felt inspired to write it up after seeing [this Reddit thread](https://www.reddit.com/r/SonyAlpha/comments/1ppwmfh/need_some_help_with_autofocus_a6700/) where others expressed similar challenges.
 
 The fix: stop asking the camera to *find* the subject and start *telling* it where to begin.
 
@@ -35,17 +37,21 @@ To set it up:
 
 1. Enable **AF Area Registration**: MENU → {{< icon "sony-icon-focus.svg" >}} (Focus) → [Focus Area] → [AF Area Registration] → [On]
 
-2. Set your focus area to {{< icon "sony-icon-tracking-expand.svg" >}} **Tracking: Expand Spot**, position it in the center[^2]
+2. Set your focus area to {{< icon "sony-icon-tracking-expand.svg" >}} **Tracking: Expand Spot**, position it in the center[^af]
+
+[^af]: Tracking focus areas require AF-C. If you don't see Tracking options, check your focus mode.
 
 3. Hold **Fn** to register it (the frame will flash to confirm)
 
-4. Assign **Reg. AF Area+AF On** to your preferred button: MENU → {{< icon "sony-icon-setup.svg" >}} (Setup) → [Operation Customize] → [{{< icon "sony-icon-still.svg" >}} Custom Key/Dial Set.] → select your key (I use AF-ON) → [Reg. AF Area+AF On]
+4. Assign **Reg. AF Area+AF On** to your preferred button: MENU → {{< icon "sony-icon-setup.svg" >}} (Setup) → [Operation Customize] → [{{< icon "sony-icon-still.svg" >}} Custom Key/Dial Set.] → Select a button like **AF-ON**[^button] → [Reg. AF Area+AF On]
+
+[^button]: The AF-ON button is great for this: it’s already ergonomically placed for back-button focusing, and using it as “track this” feels like a natural extension, no extra mental overhead. ![The AF-ON button](button.png)
 
 The **Reg. AF Area+AF On** variant is *key*. Sony [offers multiple recall options](https://helpguide.sony.net/ilc/2320/v1/en/contents/0405L_reg_af_area.html): **Regist. AF Area hold** and **Regist. AF Area tggle** [sic] just switch your focus area temporarily, while **Reg. AF Area+AF On** *also* initiates autofocus (and thus tracking via **Tracking: Expand Spot**). The latter is what makes this a true "bird button" - one press to both recall the area and start tracking.
 
 Now the workflow is simple: I see a bird (that I don't trust Wide to pick correctly), point the bird in the center of the frame, then hold AF-ON. The camera immediately starts tracking the bird. Subject recognition still helps, but within a much tighter box instead of interpreting the entire scene.
 
-Classic focus-and-recompose, except tracking means you don't lose the subject when you reframe.
+If you tried it, you'd see it's not too different from the [classic focus and recompose technique](https://photographylife.com/focus-and-recompose-technique), except now the camera is tracking in real-time as you shoot, so no risk of losing focus if the bird moves.
 
 ![Sharp focus on a bird](tracking-success.jpeg "Tracking: Expand Spot locked on immediately.")
 
@@ -92,4 +98,3 @@ If you don't want this configuration as default, Sony's [Camera Set. Memory](htt
 
 Me? I actually use this "bird button" so often that I've made it my default AF method, and even use it in non-birding situations (e.g., tracking pets or faces). Give it a try — it might become yours too.
 
-[^2]: Tracking focus areas require AF-C. If you don't see Tracking options, check your focus mode.

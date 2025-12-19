@@ -7,6 +7,18 @@
   padding-right: 1rem;
 }
 
+/* Ensures inline highlights (background + padding) render consistently across wrapped lines. */
+.box-decoration-clone {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Negative letter-spacing (-0.05em) clips the last character;
+   add extra right padding on top of the existing pa1 (0.25rem) */
+.pa1.tracked-tight {
+  padding-right: calc(0.25rem + 0.05em);
+}
+
 @media (min-width: 30rem) {
   .site-width {
     padding-left: 1.5rem;
@@ -65,6 +77,23 @@
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+/* Browser UA styles often give figure left/right margins (e.g. 40px).
+   Keep ~40px on larger screens, but smoothly reduce on narrow viewports
+   to avoid a sudden “small then big” jump at a breakpoint. */
+figure.ua-figure-mh0-s {
+  /* 0rem up to ~22rem viewport width, then ramps to 2.5rem (~40px) by ~47rem */
+  margin-left: clamp(0rem, calc((100vw - 22rem) / 10), 2.5rem);
+  margin-right: clamp(0rem, calc((100vw - 22rem) / 10), 2.5rem);
+}
+
+/* Don't upscale small images in post content (Ananke sets `.nested-img img { width: 100% }`).
+   Keep images responsive on narrow screens, but preserve intrinsic size when smaller than the container. */
+.nested-img img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
 }
 
 code {
@@ -155,6 +184,22 @@ code {
   background: #111;
   border-color: #111;
   color: #fff !important;
+}
+
+/* Inline icon sizing/alignment (used by the {{< icon >}} shortcode) */
+.inline-icon {
+  display: inline-flex;
+  align-items: center;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.inline-icon svg,
+.inline-icon img {
+  height: 1em;
+  width: auto;
+  display: block;
 }
 
 /* post table styling */

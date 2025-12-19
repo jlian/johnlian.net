@@ -76,6 +76,14 @@ figure.ua-figure-mh0-s {
   margin-right: clamp(0px, calc((100vw - 22rem) / 10), 40px);
 }
 
+/* Don't upscale small images in post content (Ananke sets `.nested-img img { width: 100% }`).
+   Keep images responsive on narrow screens, but preserve intrinsic size when smaller than the container. */
+.nested-img img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+
 code {
   font-size: 0.85em;
 }

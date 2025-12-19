@@ -36,14 +36,11 @@
           {{- $imgUrl = $img.RelPermalink -}}
           {{- $webpUrl = $webp.RelPermalink -}}
         {{- else -}}
-          {{- $imgUrl = .RelPermalink -}}
-          {{- if gt .Width 0 -}}
-            {{- $webp := .Resize (printf "%dx webp" .Width) -}}
-            {{- $webpUrl = $webp.RelPermalink -}}
-          {{- else -}}
-            {{/* Defensive guard: .Width should already be > 0 here; skip WebP if not. */}}
-            {{- $webpUrl = "" -}}
-          {{- end -}}
+          {{/* Always re-encode raster images (even without resizing) so output strips EXIF. */}}
+          {{- $img := .Resize (printf "%dx" .Width) -}}
+          {{- $imgUrl = $img.RelPermalink -}}
+          {{- $webp := .Resize (printf "%dx webp" .Width) -}}
+          {{- $webpUrl = $webp.RelPermalink -}}
         {{- end -}}
       {{- end -}}
     {{- end -}}

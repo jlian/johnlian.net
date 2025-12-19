@@ -17,10 +17,10 @@ The title (text in quotes) becomes the caption.
 {{- if $webpSrc | default "" -}}
 <picture>
   <source srcset="{{ $webpSrc }}" type="image/webp">
-  <img src="{{ $imgSrc }}" alt="{{ .Text }}" loading="lazy"{{ if $caption }} class="w-100"{{ end }}>
+  <img src="{{ $imgSrc }}" alt="{{ .Text }}" loading="lazy"{{ if $caption }} class="mw-100"{{ end }}>
 </picture>
 {{- else -}}
-<img src="{{ $imgSrc }}" alt="{{ .Text }}" loading="lazy"{{ if $caption }} class="w-100"{{ end }}>
+<img src="{{ $imgSrc }}" alt="{{ .Text }}" loading="lazy"{{ if $caption }} class="mw-100"{{ end }}>
 {{- end -}}
 {{- if $caption -}}
 <figcaption class="f6 gray tc mt2">{{ $caption }}</figcaption>

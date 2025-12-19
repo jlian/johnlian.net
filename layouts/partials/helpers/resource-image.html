@@ -1,7 +1,15 @@
 {{- $path := trim .path "/" -}}
 {{- $page := .page -}}
-{{- $size := .size | default "2500x q80" -}}
+{{- $size := .size | default "2500x" -}}
 {{- $scratch := .scratch | default (newScratch) -}}
+
+{{/* Only resize if the source image is wider than the target width (no upscaling).
+     Expects $size like `2500x` or `800x`. */}}
+{{- $targetWidth := 0 -}}
+{{- $sizeMatch := findRESubmatch `^(\d+)x$` $size -}}
+{{- if gt (len $sizeMatch) 0 -}}
+  {{- $targetWidth = int (index (index $sizeMatch 0) 1) -}}
+{{- end -}}
 
 {{- $imgUrl := printf "/%s" $path | relURL -}}
 {{- $webpUrl := "" -}}
@@ -17,10 +25,21 @@
       {{- $imgUrl = .RelPermalink -}}
       {{- $webpUrl = "" -}}
     {{- else -}}
-      {{- $img := .Resize $size -}}
-      {{- $webp := .Resize (printf "%s webp" $size) -}}
-      {{- $imgUrl = $img.RelPermalink -}}
-      {{- $webpUrl = $webp.RelPermalink -}}
+      {{- if or (eq .MediaType.SubType "svg") (eq .MediaType.SubType "svg+xml") (le .Width 0) -}}
+        {{- $imgUrl = .RelPermalink -}}
+        {{- $webpUrl = "" -}}
+      {{- else -}}
+        {{- if and (gt $targetWidth 0) (gt .Width $targetWidth) -}}
+          {{- $img := .Resize $size -}}
+          {{- $webp := .Resize (printf "%s webp" $size) -}}
+          {{- $imgUrl = $img.RelPermalink -}}
+          {{- $webpUrl = $webp.RelPermalink -}}
+        {{- else -}}
+          {{- $imgUrl = .RelPermalink -}}
+          {{- $webp := .Resize (printf "%dx webp" .Width) -}}
+          {{- $webpUrl = $webp.RelPermalink -}}
+        {{- end -}}
+      {{- end -}}
     {{- end -}}
     {{- break -}}
   {{- end -}}

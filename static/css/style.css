@@ -766,3 +766,9 @@ sup[id^="fnref"]:target {
   .chroma .go { color: #44475a; }
   .chroma .gh, .chroma .gu { color: #f8f8f2; }
 }
+
+b,
+strong,
+.b {
+  font-weight: 500;
+}

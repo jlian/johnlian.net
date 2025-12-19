@@ -67,6 +67,15 @@
   }
 }
 
+/* Browser UA styles often give figure left/right margins (e.g. 40px).
+   Keep ~40px on larger screens, but smoothly reduce on narrow viewports
+   to avoid a sudden “small then big” jump at a breakpoint. */
+figure.ua-figure-mh0-s {
+  /* 0px up to ~22rem viewport width, then ramps to 40px by ~47rem */
+  margin-left: clamp(0px, calc((100vw - 22rem) / 10), 40px);
+  margin-right: clamp(0px, calc((100vw - 22rem) / 10), 40px);
+}
+
 code {
   font-size: 0.85em;
 }

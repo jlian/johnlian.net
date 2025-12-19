@@ -166,6 +166,22 @@ code {
   color: #fff !important;
 }
 
+/* Inline icon sizing/alignment (used by the {{< icon >}} shortcode) */
+.inline-icon {
+  display: inline-flex;
+  align-items: center;
+  height: 1em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.inline-icon svg,
+.inline-icon img {
+  height: 1em;
+  width: auto;
+  display: block;
+}
+
 /* post table styling */
 article :where(table):not(:where(.gist *)) {
   width: 100%;

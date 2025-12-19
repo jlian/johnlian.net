@@ -51,7 +51,7 @@ The **Reg. AF Area+AF On** variant is *key*. Sony [offers multiple recall option
 
 Now the workflow is simple: I see a bird (that I don't trust Wide to pick correctly), point the bird in the center of the frame, then hold AF-ON. The camera immediately starts tracking the bird. Subject recognition still helps, but within a much tighter box instead of interpreting the entire scene.
 
-If you try it, you'd see it's not too different from the [classic focus and recompose technique](https://photographylife.com/focus-and-recompose-technique), except now the camera is tracking in real-time as you shoot, so no risk of losing focus if the bird moves.
+If you tried it, you'd see it's not too different from the [classic focus and recompose technique](https://photographylife.com/focus-and-recompose-technique), except now the camera is tracking in real-time as you shoot, so no risk of losing focus if the bird moves.
 
 ![Sharp focus on a bird](tracking-success.jpeg "Tracking: Expand Spot locked on immediately.")
 
@@ -96,5 +96,5 @@ These are second-order improvements. The big win is changing the interaction mod
 
 If you don't want this configuration as default, Sony's [Camera Set. Memory](https://helpguide.sony.net/ilc/2320/v1/en/contents/0413_setting_memory.html) solves that by letting you register up to 3 sets of settings and recall them via the mode dial.
 
-Me? I actually use this "bird button" so often that I've made it my default AF method, and even use it in non-birding situations (e.g., tracking pets or faces). Give it a try, might become yours too.
+Me? I actually use this "bird button" so often that I've made it my default AF method, and even use it in non-birding situations (e.g., tracking pets or faces). Give it a try — it might become yours too.
 

@@ -4,9 +4,10 @@
 {{- $scratch := .scratch | default (newScratch) -}}
 
 {{/* Only resize if the source image is wider than the target width (no upscaling).
-     Expects $size like `2500x` or `800x`. */}}
+  Expects $size starting with `WIDTHx`, e.g. `2500x`, `800x600`, or `2500x q80`.
+  Only the leading WIDTH is used to determine whether to resize. */}}
 {{- $targetWidth := 0 -}}
-{{- $sizeMatch := findRESubmatch `^(\d+)x$` $size -}}
+{{- $sizeMatch := findRESubmatch `^(\d+)x` $size -}}
 {{- if gt (len $sizeMatch) 0 -}}
   {{- $targetWidth = int (index (index $sizeMatch 0) 1) -}}
 {{- end -}}
@@ -36,8 +37,13 @@
           {{- $webpUrl = $webp.RelPermalink -}}
         {{- else -}}
           {{- $imgUrl = .RelPermalink -}}
-          {{- $webp := .Resize (printf "%dx webp" .Width) -}}
-          {{- $webpUrl = $webp.RelPermalink -}}
+          {{- if gt .Width 0 -}}
+            {{- $webp := .Resize (printf "%dx webp" .Width) -}}
+            {{- $webpUrl = $webp.RelPermalink -}}
+          {{- else -}}
+            {{/* Defensive guard: .Width should already be > 0 here; skip WebP if not. */}}
+            {{- $webpUrl = "" -}}
+          {{- end -}}
         {{- end -}}
       {{- end -}}
     {{- end -}}

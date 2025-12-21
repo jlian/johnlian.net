@@ -7,7 +7,7 @@ tags:
 - autofocus
 - birds
 - wildlife
-featured_image: "bird-in-branches.jpeg"
+featured_image: "hovering-hummingbird.jpeg"
 description: "PHOTOGRAPHERS HATE HIM! With this one weird trick, local man can focus and recompose with subject tracking. Learn the truth now!"
 ---
 
@@ -19,13 +19,17 @@ The fix: stop asking the camera to *find* the subject and start *telling* it whe
 
 ## The problem: Wide AF with Subject Recognition can get confused
 
-My default Focus Area is **Wide** ([why](#why-use-wide-as-default)). With **Subject Recog in AF** enabled and set to Bird, Sony [prioritizes recognized subjects](https://helpguide.sony.net/ilc/2320/v1/en/contents/211h_subject_recognition_af.html) inside or around that area.
+My default Focus Area is **Wide** ([why?](#why-use-wide-as-default)). With **Subject Recog in AF** enabled and set to Bird, Sony [prioritizes recognized subjects](https://helpguide.sony.net/ilc/2320/v1/en/contents/211h_subject_recognition_af.html) inside or around that area.
 
 Of course, as the area is "wide," the camera can prioritize subjects almost anywhere. Great, but not if the bird is tiny and the scene is full of high-contrast branches. Too many plausible targets.
 
-![Small bird perched among dense branches](bird-in-branches.jpeg "Wide AF has too many high-contrast edges to choose from here.")
+![Small bird perched among dense branches](hummingbird-in-branches.jpeg "Wide AF has too many high-contrast edges to choose from here.")
 
-![Bird partially hidden in foliage](bird-in-foliage.jpeg "Another challenging scene: the bird is small and the background is busy.")
+![Bird partially hidden in foliage](bird-in-branches.jpeg "Another challenging scene: the bird is small blends into the branches.")
+
+Here’s a quick clip of what this issue looks like with a highly accurate simulation of a bird in a complex scene. The camera is set to **Wide + Bird**, but it keeps hunting around and only locks on the chicken after several tries:
+
+![Wide + Bird hunting demo](reguarl-af-on.mp4 "Wide + Bird: it hunts around and only recognizes the chicken after a few tries.")
 
 ## The solution: AF Area Registration + Tracking: Expand Spot + Reg. AF Area+AF On
 
@@ -49,13 +53,15 @@ To set it up:
 
 The **Reg. AF Area+AF On** variant is *key*. Sony [offers multiple recall options](https://helpguide.sony.net/ilc/2320/v1/en/contents/0405L_reg_af_area.html): **Regist. AF Area hold** and **Regist. AF Area tggle** [sic] just switch your focus area temporarily, while **Reg. AF Area+AF On** *also* initiates autofocus (and thus tracking via **Tracking: Expand Spot**). The latter is what makes this a true "bird button" - one press to both recall the area and start tracking.
 
-Now the workflow is simple: I see a bird (that I don't trust Wide to pick correctly), point the bird in the center of the frame, then hold AF-ON. The camera immediately starts tracking the bird. Subject recognition still helps, but within a much tighter box instead of interpreting the entire scene.
+Now the workflow is simple: I see a bird (that I don't trust Wide to pick correctly), point the bird in the center of the frame, then hold AF-ON. The camera immediately starts tracking the bird. Subject recognition still helps, but within a much tighter box instead of interpreting the entire scene. Here's the same chicken simulation, but this time using the bird button:
 
-If you tried it, you'd see it's not too different from the [classic focus and recompose technique](https://photographylife.com/focus-and-recompose-technique), except now the camera is tracking in real-time as you shoot, so no risk of losing focus if the bird moves.
+![Bird button locks instantly demo](bird-button.mp4 "Bird button: one press to start immediate, sticky tracking.")
 
-![Sharp focus on a bird](tracking-success.jpeg "Tracking: Expand Spot locked on immediately.")
+In practice, this method feels quite similar to the [classic focus and recompose technique](https://photographylife.com/focus-and-recompose-technique), except now the camera is tracking in real-time as you shoot, so no risk of losing focus if the bird moves.
 
-![Bird in flight](bird-in-flight.jpeg "Once tracking starts, it follows the subject through the frame.")
+![Sharp focus on a bird](tracking-success.jpeg "Busy backgrounds are no match for this method.")
+
+![Bird in flight](black-throated-blue.jpeg "Even fast motion is manageable with tracking.")
 
 ## How this compares to Sony's "Track Recog Off on Hold" method
 
@@ -79,9 +85,7 @@ The issue with wildlife is that you don't always have time to place the focus po
 
 For fast-moving subjects that dart around the frame, the ability to half-press shutter and let Wide find the bird *anywhere* is valuable. I want that flexibility for the easy shots. But when Wide gets confused by a busy background, I want a quick override that says "start *here*" without fumbling with a joystick.
 
-![Hummingbird hovering](hummingbird-hovering.jpeg "Wide AF shines when the subject moves unpredictably.")
-
-![Fast-moving bird in frame](fast-moving-bird.jpeg "For easy shots, Wide finds the bird no matter where it ends up.")
+![Hummingbird hovering](fast-moving-bird.jpeg "Wide is great for point-and-shoot situations with unpredictable framing.")
 
 ## Advanced tuning
 

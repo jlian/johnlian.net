@@ -243,6 +243,21 @@ function enhanceAutoplayVideos() {
     const source = video.querySelector('source[data-src]');
     if (!source) return;
 
+    let observer = null;
+
+    const handleError = () => {
+      video.controls = true;
+      video.loop = false;
+      video.dataset.autoplayLazyError = 'true';
+      if (observer) {
+        observer.unobserve(video);
+        observer.disconnect();
+        observer = null;
+      }
+    };
+
+    video.addEventListener('error', handleError, { once: true });
+
     const setSrcIfNeeded = () => {
       if (video.dataset.autoplayLazyLoaded === 'true') return;
       if (source.getAttribute('src')) return;
@@ -270,7 +285,7 @@ function enhanceAutoplayVideos() {
       return;
     }
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) {
@@ -283,6 +298,7 @@ function enhanceAutoplayVideos() {
           if (prefersReducedMotion) {
             observer.unobserve(video);
             observer.disconnect();
+            observer = null;
             return;
           }
 

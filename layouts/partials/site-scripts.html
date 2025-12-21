@@ -9,7 +9,7 @@
 {{ $isPage := .IsPage }}
 {{ $hasMermaid := and $isPage (in .RawContent "```mermaid") }}
 {{ if $isPage }}
-  <script src="{{ "js/post-enhancements.js" | absURL }}" defer></script>
+  <script src="{{ "js/post-enhancements.js" | relURL }}" defer></script>
 {{ end }}
 {{ if $hasMermaid }}
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>

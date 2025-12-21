@@ -12,7 +12,7 @@ The title (text in quotes) becomes the caption.
 {{- if eq $ext ".mp4" -}}
 
 {{- /* Ensure page-bundle MP4 URLs resolve correctly even when the site is hosted under a subdirectory. */ -}}
-{{- $videoURL := (printf "%s%s" .Page.RelPermalink $dest) | relURL -}}
+{{- $videoURL := (path.Join .Page.RelPermalink $dest) | relURL -}}
 
 {{- if $caption -}}
 <figure class="tc ua-figure-mh0-s">

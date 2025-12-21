@@ -238,6 +238,7 @@ function enhanceAutoplayVideos() {
 
   const loadAndPlay = (video) => {
     if (video.dataset.autoplayLazyEnhanced === 'true') return;
+    video.dataset.autoplayLazyEnhanced = 'true';
 
     const source = video.querySelector('source[data-src]');
     if (!source) return;
@@ -248,6 +249,7 @@ function enhanceAutoplayVideos() {
       if (!nextSrc) return;
       source.setAttribute('src', nextSrc);
       video.load();
+      video.dataset.autoplayLazyLoaded = 'true';
     };
 
     const tryPlay = () => {
@@ -263,27 +265,33 @@ function enhanceAutoplayVideos() {
 
     if (!('IntersectionObserver' in window)) {
       setSrcIfNeeded();
-      tryPlay();
-      video.dataset.autoplayLazyEnhanced = 'true';
+      if (!prefersReducedMotion) tryPlay();
       return;
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setSrcIfNeeded();
-            tryPlay();
-          } else {
-            video.pause();
+          if (!entry.isIntersecting) {
+            if (!prefersReducedMotion) video.pause();
+            return;
           }
+
+          setSrcIfNeeded();
+
+          if (prefersReducedMotion) {
+            observer.unobserve(video);
+            observer.disconnect();
+            return;
+          }
+
+          if (video.paused) tryPlay();
         });
       },
       { rootMargin: '200px 0px', threshold: 0.01 }
     );
 
     observer.observe(video);
-    video.dataset.autoplayLazyEnhanced = 'true';
   };
 
   videos.forEach(loadAndPlay);

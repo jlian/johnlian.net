@@ -25,11 +25,11 @@ Of course, as the area is "wide," the camera can prioritize subjects almost anyw
 
 ![Small bird perched among dense branches](hummingbird-in-branches.jpeg "Wide AF has too many high-contrast edges to choose from here.")
 
-![Bird partially hidden in foliage](bird-in-branches.jpeg "Another challenging scene: the bird is small blends into the branches.")
+![Bird partially hidden in foliage](bird-in-branches.jpeg "Another challenging scene: the bird is small and blends into the branches.")
 
 Here’s a quick clip of what this issue looks like with a highly accurate simulation of a bird in a complex scene. The camera is set to **Wide + Bird**, but it keeps hunting around and only locks on the chicken after several tries:
 
-![Wide + Bird hunting demo](reguarl-af-on.mp4 "Wide + Bird: it hunts around and only recognizes the chicken after a few tries.")
+![Wide + Bird hunting demo](regular-af-on.mp4 "Wide + Bird: it hunts around and only recognizes the chicken after a few tries.")
 
 ## The solution: AF Area Registration + Tracking: Expand Spot + Reg. AF Area+AF On
 

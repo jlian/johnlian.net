@@ -244,6 +244,7 @@ function enhanceAutoplayVideos() {
     if (!source) return;
 
     const setSrcIfNeeded = () => {
+      if (video.dataset.autoplayLazyLoaded === 'true') return;
       if (source.getAttribute('src')) return;
       const nextSrc = source.getAttribute('data-src');
       if (!nextSrc) return;

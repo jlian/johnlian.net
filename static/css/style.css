@@ -90,7 +90,8 @@ figure.ua-figure-mh0-s {
 
 /* Don't upscale small images in post content (Ananke sets `.nested-img img { width: 100% }`).
    Keep images responsive on narrow screens, but preserve intrinsic size when smaller than the container. */
-.nested-img img {
+.nested-img img,
+.nested-img video {
   width: auto;
   max-width: 100%;
   height: auto;

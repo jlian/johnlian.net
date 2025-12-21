@@ -5,11 +5,34 @@ The title (text in quotes) becomes the caption.
 */}}
 {{- $dest := strings.TrimPrefix "/" .Destination -}}
 {{- $dest = strings.TrimPrefix "./" $dest -}}
+{{- $ext := lower (path.Ext $dest) -}}
 {{- $scratch := newScratch -}}
+{{- $caption := .Title -}}
+
+{{- if eq $ext ".mp4" -}}
+
+{{- /* Ensure page-bundle MP4 URLs resolve correctly even when the site is hosted under a subdirectory. */ -}}
+{{- $videoURL := (path.Join .Page.RelPermalink $dest) | relURL -}}
+
+{{- if $caption -}}
+<figure class="tc ua-figure-mh0-s">
+{{- end -}}
+
+<video class="mw-100" autoplay muted loop playsinline preload="metadata"{{ if not $caption }} aria-label="{{ .Text }}" title="{{ .Text }}"{{ end }}>
+  <source src="{{ $videoURL }}" type="video/mp4" />
+  Your browser doesn't support embedded MP4 video. You can download it here: <a href="{{ $videoURL }}">{{ $dest }}</a>
+</video>
+
+{{- if $caption -}}
+<figcaption class="f6 gray tc mt2">{{ $caption }}</figcaption>
+</figure>
+{{- end -}}
+
+{{- else -}}
+
 {{- partial "helpers/resource-image.html" (dict "path" $dest "page" .Page "scratch" $scratch) -}}
 {{- $imgSrc := $scratch.Get "img" -}}
 {{- $webpSrc := $scratch.Get "webp" -}}
-{{- $caption := .Title -}}
 
 {{- if $caption -}}
 <figure class="tc ua-figure-mh0-s">
@@ -25,4 +48,6 @@ The title (text in quotes) becomes the caption.
 {{- if $caption -}}
 <figcaption class="f6 gray tc mt2">{{ $caption }}</figcaption>
 </figure>
+{{- end -}}
+
 {{- end -}}

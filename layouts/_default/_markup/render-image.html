@@ -15,7 +15,7 @@ The title (text in quotes) becomes the caption.
 <figure class="tc ua-figure-mh0-s">
 {{- end -}}
 
-<video class="mw-100" data-autoplay-lazy="true" loop muted playsinline preload="metadata"{{ if not $caption }} aria-label="{{ .Text }}"{{ end }}>
+<video class="mw-100" width="1920" height="1080" data-autoplay-lazy="true" loop muted playsinline preload="metadata"{{ if not $caption }} aria-label="{{ .Text }}"{{ end }}>
   <source data-src="{{ $dest }}" type="video/mp4" />
   Your browser doesn't support embedded MP4 video. You can download it here: <a href="{{ $dest }}">{{ $dest }}</a>
 </video>
@@ -24,7 +24,7 @@ The title (text in quotes) becomes the caption.
   <style>
     video[data-autoplay-lazy="true"] { display: none; }
   </style>
-  <video class="mw-100" loop muted playsinline controls preload="metadata"{{ if not $caption }} aria-label="{{ .Text }}"{{ end }}>
+  <video class="mw-100" width="1920" height="1080" loop muted playsinline controls preload="metadata"{{ if not $caption }} aria-label="{{ .Text }}"{{ end }}>
     <source src="{{ $dest }}" type="video/mp4" />
   </video>
 </noscript>

@@ -11,13 +11,16 @@ The title (text in quotes) becomes the caption.
 
 {{- if eq $ext ".mp4" -}}
 
+{{- /* Ensure page-bundle MP4 URLs resolve correctly even when the site is hosted under a subdirectory. */ -}}
+{{- $videoURL := (printf "%s%s" .Page.RelPermalink $dest) | relURL -}}
+
 {{- if $caption -}}
 <figure class="tc ua-figure-mh0-s">
 {{- end -}}
 
-<video class="mw-100" autoplay muted loop playsinline preload="metadata"{{ if not $caption }} aria-label="{{ .Text }}"{{ end }}>
-  <source src="{{ $dest }}" type="video/mp4" />
-  Your browser doesn't support embedded MP4 video. You can download it here: <a href="{{ $dest }}">{{ $dest }}</a>
+<video class="mw-100" autoplay muted loop playsinline preload="metadata"{{ if not $caption }} aria-label="{{ .Text }}" title="{{ .Text }}"{{ end }}>
+  <source src="{{ $videoURL }}" type="video/mp4" />
+  Your browser doesn't support embedded MP4 video. You can download it here: <a href="{{ $videoURL }}">{{ $dest }}</a>
 </video>
 
 {{- if $caption -}}

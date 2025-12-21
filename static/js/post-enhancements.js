@@ -4,6 +4,7 @@
     renderMermaid();
     enhanceToc();
     enhanceFootnotes();
+    enhanceHoverVideoControls();
   };
 
   if (document.readyState === 'loading') {
@@ -54,6 +55,41 @@ function enhanceCodeBlocks() {
 
     block.insertBefore(meta, pre);
     block.dataset.enhanced = 'true';
+  });
+}
+
+function enhanceHoverVideoControls() {
+  const videos = document.querySelectorAll('video[data-hover-controls="true"]');
+  if (!videos.length) return;
+
+  // Only hide controls on devices that actually support hover.
+  // On touch/coarse pointers, keep controls visible so users can always access them.
+  const hoverCapable =
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!hoverCapable) return;
+
+  videos.forEach((video) => {
+    if (video.dataset.hoverControlsEnhanced === 'true') return;
+    video.dataset.hoverControlsEnhanced = 'true';
+
+    // No-JS fallback is `controls` in HTML. With JS, start hidden.
+    video.controls = false;
+
+    const show = () => {
+      video.controls = true;
+    };
+
+    const hide = () => {
+      // Don't hide while keyboard users are interacting with the controls.
+      if (video.matches(':focus-within')) return;
+      video.controls = false;
+    };
+
+    video.addEventListener('pointerenter', show);
+    video.addEventListener('pointerleave', hide);
+    video.addEventListener('focusin', show);
+    video.addEventListener('focusout', hide);
   });
 }
 

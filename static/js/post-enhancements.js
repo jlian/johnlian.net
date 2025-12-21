@@ -4,7 +4,6 @@
     renderMermaid();
     enhanceToc();
     enhanceFootnotes();
-    enhanceAutoplayVideos();
   };
 
   if (document.readyState === 'loading') {
@@ -226,90 +225,4 @@ function enhanceFootnotes() {
     ref.setAttribute('aria-describedby', tooltipId);
     ref.setAttribute('title', '');
   });
-}
-
-function enhanceAutoplayVideos() {
-  const videos = document.querySelectorAll('video[data-autoplay-lazy="true"]');
-  if (!videos.length) return;
-
-  const prefersReducedMotion =
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const loadAndPlay = (video) => {
-    if (video.dataset.autoplayLazyEnhanced === 'true') return;
-    video.dataset.autoplayLazyEnhanced = 'true';
-
-    const source = video.querySelector('source[data-src]');
-    if (!source) return;
-
-    let observer = null;
-
-    const handleError = () => {
-      video.controls = true;
-      video.loop = false;
-      video.dataset.autoplayLazyError = 'true';
-      if (observer) {
-        observer.unobserve(video);
-        observer.disconnect();
-        observer = null;
-      }
-    };
-
-    video.addEventListener('error', handleError, { once: true });
-
-    const setSrcIfNeeded = () => {
-      if (video.dataset.autoplayLazyLoaded === 'true') return;
-      if (source.getAttribute('src')) return;
-      const nextSrc = source.getAttribute('data-src');
-      if (!nextSrc) return;
-      source.setAttribute('src', nextSrc);
-      video.load();
-      video.dataset.autoplayLazyLoaded = 'true';
-    };
-
-    const tryPlay = () => {
-      if (prefersReducedMotion) return;
-      const p = video.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-    };
-
-    if (prefersReducedMotion) {
-      video.loop = false;
-      video.controls = true;
-    }
-
-    if (!('IntersectionObserver' in window)) {
-      setSrcIfNeeded();
-      if (!prefersReducedMotion) tryPlay();
-      return;
-    }
-
-    observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            if (!prefersReducedMotion) video.pause();
-            return;
-          }
-
-          setSrcIfNeeded();
-
-          if (prefersReducedMotion) {
-            observer.unobserve(video);
-            observer.disconnect();
-            observer = null;
-            return;
-          }
-
-          if (video.paused) tryPlay();
-        });
-      },
-      { rootMargin: '200px 0px', threshold: 0.01 }
-    );
-
-    observer.observe(video);
-  };
-
-  videos.forEach(loadAndPlay);
 }

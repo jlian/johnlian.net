@@ -25,7 +25,7 @@ Of course, as the area is "wide," the camera can prioritize subjects almost anyw
 
 ![Small bird perched among dense branches](hummingbird-in-branches.jpeg "Wide AF has too many high-contrast edges to choose from here.")
 
-![Bird partially hidden in foliage](bird-in-branches.jpeg "Another challenging scene: the bird is small and blends into the branches.")
+![Small bird partially obscured by branches](bird-in-branches.jpeg "Another challenging scene: the bird is small and blends into the branches.")
 
 Here’s a quick clip of what this issue looks like with a highly accurate simulation of a bird in a complex scene. The camera is set to **Wide + Bird**, but it keeps hunting around and only locks on the chicken after several tries:
 
@@ -49,7 +49,7 @@ To set it up:
 
 4. Assign **Reg. AF Area+AF On** to your preferred button: MENU → {{< icon "sony-icon-setup.svg" >}} (Setup) → [Operation Customize] → [{{< icon "sony-icon-still.svg" >}} Custom Key/Dial Set.] → Select a button like **AF-ON**[^button] → [Reg. AF Area+AF On]
 
-[^button]: The AF-ON button is great for this: it’s already ergonomically placed for back-button focusing, and using it as “track this” feels like a natural extension, no extra mental overhead. ![The AF-ON button](button.png)
+[^button]: The AF-ON button is great for this: it’s already ergonomically placed for back-button focusing, and using it as “track this” feels like a natural extension, no extra mental overhead. ![Sony α6700 AF-ON button location](button.png)
 
 The **Reg. AF Area+AF On** variant is *key*. Sony [offers multiple recall options](https://helpguide.sony.net/ilc/2320/v1/en/contents/0405L_reg_af_area.html): **Regist. AF Area hold** and **Regist. AF Area tggle** [sic] just switch your focus area temporarily, while **Reg. AF Area+AF On** *also* initiates autofocus (and thus tracking via **Tracking: Expand Spot**). The latter is what makes this a true "bird button" - one press to both recall the area and start tracking.
 
@@ -85,7 +85,7 @@ The issue with wildlife is that you don't always have time to place the focus po
 
 For fast-moving subjects that dart around the frame, the ability to half-press shutter and let Wide find the bird *anywhere* is valuable. I want that flexibility for the easy shots. But when Wide gets confused by a busy background, I want a quick override that says "start *here*" without fumbling with a joystick.
 
-![Hummingbird hovering](fast-moving-bird.jpeg "Wide is great for point-and-shoot situations with unpredictable framing.")
+![Fast-moving bird in flight](fast-moving-bird.jpeg "Wide is great for point-and-shoot situations with unpredictable framing.")
 
 ## Advanced tuning
 

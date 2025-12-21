@@ -5,11 +5,38 @@ The title (text in quotes) becomes the caption.
 */}}
 {{- $dest := strings.TrimPrefix "/" .Destination -}}
 {{- $dest = strings.TrimPrefix "./" $dest -}}
+{{- $ext := lower (path.Ext $dest) -}}
 {{- $scratch := newScratch -}}
+{{- $caption := .Title -}}
+
+{{- if eq $ext ".mp4" -}}
+
+{{- if $caption -}}
+<figure class="tc ua-figure-mh0-s">
+{{- end -}}
+
+<video class="mw-100" data-autoplay-lazy="true" loop muted playsinline preload="metadata" aria-label="{{ .Text }}">
+  <source data-src="{{ $dest }}" type="video/mp4" />
+  Your browser doesn't support embedded MP4 video. You can download it here: <a href="{{ $dest }}">{{ $dest }}</a>
+</video>
+
+<noscript><style>video[data-autoplay-lazy="true"]{display:none}</style></noscript>
+<noscript>
+  <video class="mw-100" loop muted playsinline controls preload="metadata" aria-label="{{ .Text }}">
+    <source src="{{ $dest }}" type="video/mp4" />
+  </video>
+</noscript>
+
+{{- if $caption -}}
+<figcaption class="f6 gray tc mt2">{{ $caption }}</figcaption>
+</figure>
+{{- end -}}
+
+{{- else -}}
+
 {{- partial "helpers/resource-image.html" (dict "path" $dest "page" .Page "scratch" $scratch) -}}
 {{- $imgSrc := $scratch.Get "img" -}}
 {{- $webpSrc := $scratch.Get "webp" -}}
-{{- $caption := .Title -}}
 
 {{- if $caption -}}
 <figure class="tc ua-figure-mh0-s">
@@ -25,4 +52,6 @@ The title (text in quotes) becomes the caption.
 {{- if $caption -}}
 <figcaption class="f6 gray tc mt2">{{ $caption }}</figcaption>
 </figure>
+{{- end -}}
+
 {{- end -}}

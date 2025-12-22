@@ -61,9 +61,7 @@
     {{- with $ogImage }}
       {{- $absolute := . -}}
       {{- if not (hasPrefix $absolute "http") -}}
-        {{- $base := strings.TrimRight $.Site.BaseURL "/" -}}
-        {{- $path := strings.TrimLeft (strings.TrimSpace $absolute) "/" -}}
-        {{- $absolute = printf "%s/%s" $base $path -}}
+        {{- $absolute = $absolute | absURL -}}
       {{- end -}}
       <meta property="og:image" content="{{ $absolute }}">
       <meta name="twitter:image" content="{{ $absolute }}">

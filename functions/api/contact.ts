@@ -13,8 +13,8 @@ type Env = {
 };
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const SUCCESS_REDIRECT = "/about/?sent=1";
-const ERROR_REDIRECT = "/about/?error=1";
+const SUCCESS_REDIRECT = "/about/#contact-success";
+const ERROR_REDIRECT = "/about/#contact-error";
 
 export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method !== "POST") {

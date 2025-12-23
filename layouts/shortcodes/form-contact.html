@@ -4,6 +4,12 @@
 {{ $turnstileSiteKey := .Get "turnstileSiteKey" | default site.Params.turnstileSiteKey }}
 {{ if eq $turnstileSiteKey ".Site.Params.turnstileSiteKey" }}{{ $turnstileSiteKey = "" }}{{ end }}
 
+<noscript>
+  <div class="pa3 mv3 bg-washed-yellow dark-gray br2">
+    This contact form requires JavaScript enabled to submit.
+  </div>
+</noscript>
+
 <form
   class="black-80 sans-serif"
   accept-charset="UTF-8"
@@ -51,5 +57,20 @@
 {{ if $turnstileSiteKey }}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{ end }}
-<meta name="htmx-config" content='{"responseHandling": [{"code":"204","swap":false},{"code":".*","swap":true}]}' />
 <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous" defer></script>
+
+<script>
+  // Allow the server to return real HTTP error status codes while still
+  // swapping the returned HTML fragment into the page.
+  document.body.addEventListener("htmx:beforeSwap", function (evt) {
+    // Respect explicit "no content" responses.
+    if (evt.detail.xhr && evt.detail.xhr.status === 204) {
+      return;
+    }
+
+    if (evt.detail.isError) {
+      evt.detail.shouldSwap = true;
+      evt.detail.isError = false;
+    }
+  });
+</script>

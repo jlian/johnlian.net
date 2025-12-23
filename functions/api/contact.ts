@@ -14,17 +14,23 @@ type Env = {
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-const CONTACT_BANNER_CONTAINER_ID = "contact-messages";
-const CONTACT_BANNER_SUCCESS_ID = "contact-success";
-const CONTACT_BANNER_ERROR_ID = "contact-error";
+const CONTACT_ALERT_CONTAINER_ID = "contact-messages";
+const CONTACT_ALERT_SUCCESS_ID = "contact-success";
+const CONTACT_ALERT_ERROR_ID = "contact-error";
 
-const CONTACT_BANNER_SUCCESS_CLASS_VISIBLE = "pa3 mv3 bg-washed-green dark-green br2";
-const CONTACT_BANNER_SUCCESS_CLASS_HIDDEN = "dn pa3 mv3 bg-washed-green dark-green br2";
-const CONTACT_BANNER_ERROR_CLASS_VISIBLE = "pa3 mv3 bg-washed-red dark-red br2";
-const CONTACT_BANNER_ERROR_CLASS_HIDDEN = "dn pa3 mv3 bg-washed-red dark-red br2";
+const CONTACT_ALERT_BASE_CLASS = "pa3 mv3 br2";
+const CONTACT_ALERT_HIDDEN_PREFIX = "dn";
 
-const CONTACT_BANNER_SUCCESS_MESSAGE = "Message sent successfully. Thank you for reaching out!";
-const CONTACT_BANNER_ERROR_MESSAGE = "Something went wrong sending your message. Please try again later.";
+const CONTACT_ALERT_SUCCESS_VARIANT_CLASS = "bg-washed-green dark-green";
+const CONTACT_ALERT_ERROR_VARIANT_CLASS = "bg-washed-red dark-red";
+
+const CONTACT_ALERT_SUCCESS_CLASS_VISIBLE = `${CONTACT_ALERT_BASE_CLASS} ${CONTACT_ALERT_SUCCESS_VARIANT_CLASS}`;
+const CONTACT_ALERT_SUCCESS_CLASS_HIDDEN = `${CONTACT_ALERT_HIDDEN_PREFIX} ${CONTACT_ALERT_BASE_CLASS} ${CONTACT_ALERT_SUCCESS_VARIANT_CLASS}`;
+const CONTACT_ALERT_ERROR_CLASS_VISIBLE = `${CONTACT_ALERT_BASE_CLASS} ${CONTACT_ALERT_ERROR_VARIANT_CLASS}`;
+const CONTACT_ALERT_ERROR_CLASS_HIDDEN = `${CONTACT_ALERT_HIDDEN_PREFIX} ${CONTACT_ALERT_BASE_CLASS} ${CONTACT_ALERT_ERROR_VARIANT_CLASS}`;
+
+const CONTACT_ALERT_SUCCESS_MESSAGE = "Message sent successfully. Thank you for reaching out!";
+const CONTACT_ALERT_ERROR_MESSAGE = "Something went wrong sending your message. Please try again later.";
 
 export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method !== "POST") {
@@ -63,7 +69,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
     }
 
     if (isHtmxRequest(request)) {
-      return contactBannerHtmlResponse({ ok: true });
+      return contactAlertHtmlResponse({ ok: true });
     }
 
     return nonHtmxNotSupportedResponse();
@@ -106,7 +112,7 @@ async function parseContactForm(request: Request): Promise<{
 
 function errorResponse(request: Request, message: string, status: number) {
   if (isHtmxRequest(request)) {
-    return contactBannerHtmlResponse({ ok: false, status });
+    return contactAlertHtmlResponse({ ok: false, status });
   }
 
   return new Response(message, {
@@ -127,17 +133,27 @@ function isHtmxRequest(request: Request): boolean {
   return request.headers.get("HX-Request") === "true";
 }
 
-function contactBannerHtmlResponse(result: { ok: boolean; status?: number }) {
-  const successClass = result.ok ? CONTACT_BANNER_SUCCESS_CLASS_VISIBLE : CONTACT_BANNER_SUCCESS_CLASS_HIDDEN;
-  const errorClass = result.ok ? CONTACT_BANNER_ERROR_CLASS_HIDDEN : CONTACT_BANNER_ERROR_CLASS_VISIBLE;
+/**
+ * Returns the HTML fragment used by the contact form to display a success/error alert.
+ *
+ * Security: this fragment intentionally contains only constant strings (no user input)
+ * to avoid XSS risk in the returned HTML.
+ *
+ * Notes:
+ * - For HTMX requests, callers may return non-2xx status codes to preserve HTTP semantics.
+ * - The frontend is responsible for swapping this fragment even on error statuses.
+ */
+function contactAlertHtmlResponse(result: { ok: boolean; status?: number }) {
+  const successClass = result.ok ? CONTACT_ALERT_SUCCESS_CLASS_VISIBLE : CONTACT_ALERT_SUCCESS_CLASS_HIDDEN;
+  const errorClass = result.ok ? CONTACT_ALERT_ERROR_CLASS_HIDDEN : CONTACT_ALERT_ERROR_CLASS_VISIBLE;
 
   const html = `
-<div id="${CONTACT_BANNER_CONTAINER_ID}">
-  <div id="${CONTACT_BANNER_SUCCESS_ID}" class="${successClass}">
-    ${CONTACT_BANNER_SUCCESS_MESSAGE}
+<div id="${CONTACT_ALERT_CONTAINER_ID}">
+  <div id="${CONTACT_ALERT_SUCCESS_ID}" class="${successClass}">
+    ${CONTACT_ALERT_SUCCESS_MESSAGE}
   </div>
-  <div id="${CONTACT_BANNER_ERROR_ID}" class="${errorClass}">
-    ${CONTACT_BANNER_ERROR_MESSAGE}
+  <div id="${CONTACT_ALERT_ERROR_ID}" class="${errorClass}">
+    ${CONTACT_ALERT_ERROR_MESSAGE}
   </div>
 </div>`.trim();
 

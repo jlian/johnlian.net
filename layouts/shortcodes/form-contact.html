@@ -51,4 +51,5 @@
 {{ if $turnstileSiteKey }}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{ end }}
-<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" defer></script>
+<meta name="htmx-config" content='{"responseHandling": [{"code":"204","swap":false},{"code":".*","swap":true}]}' />
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous" defer></script>

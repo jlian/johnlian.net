@@ -14,6 +14,18 @@ type Env = {
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
+const CONTACT_BANNER_CONTAINER_ID = "contact-messages";
+const CONTACT_BANNER_SUCCESS_ID = "contact-success";
+const CONTACT_BANNER_ERROR_ID = "contact-error";
+
+const CONTACT_BANNER_SUCCESS_CLASS_VISIBLE = "pa3 mv3 bg-washed-green dark-green br2";
+const CONTACT_BANNER_SUCCESS_CLASS_HIDDEN = "dn pa3 mv3 bg-washed-green dark-green br2";
+const CONTACT_BANNER_ERROR_CLASS_VISIBLE = "pa3 mv3 bg-washed-red dark-red br2";
+const CONTACT_BANNER_ERROR_CLASS_HIDDEN = "dn pa3 mv3 bg-washed-red dark-red br2";
+
+const CONTACT_BANNER_SUCCESS_MESSAGE = "Message sent successfully. Thank you for reaching out!";
+const CONTACT_BANNER_ERROR_MESSAGE = "Something went wrong sending your message. Please try again later.";
+
 export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", {
@@ -94,7 +106,7 @@ async function parseContactForm(request: Request): Promise<{
 
 function errorResponse(request: Request, message: string, status: number) {
   if (isHtmxRequest(request)) {
-    return contactBannerHtmlResponse({ ok: false });
+    return contactBannerHtmlResponse({ ok: false, status });
   }
 
   return new Response(message, {
@@ -111,30 +123,32 @@ function nonHtmxNotSupportedResponse() {
 }
 
 function isHtmxRequest(request: Request): boolean {
-  // htmx sends HX-Request: true for AJAX requests.
+  // HTMX sends HX-Request: true for AJAX requests.
   return request.headers.get("HX-Request") === "true";
 }
 
-function contactBannerHtmlResponse(result: { ok: boolean }) {
-  const successClass = result.ok ? "pa3 mv3 bg-washed-green dark-green br2" : "dn pa3 mv3 bg-washed-green dark-green br2";
-  const errorClass = result.ok ? "dn pa3 mv3 bg-washed-red dark-red br2" : "pa3 mv3 bg-washed-red dark-red br2";
+function contactBannerHtmlResponse(result: { ok: boolean; status?: number }) {
+  const successClass = result.ok ? CONTACT_BANNER_SUCCESS_CLASS_VISIBLE : CONTACT_BANNER_SUCCESS_CLASS_HIDDEN;
+  const errorClass = result.ok ? CONTACT_BANNER_ERROR_CLASS_HIDDEN : CONTACT_BANNER_ERROR_CLASS_VISIBLE;
 
   const html = `
-<div id="contact-messages">
-  <div id="contact-success" class="${successClass}">
-    Message sent successfully. Thank you for reaching out!
+<div id="${CONTACT_BANNER_CONTAINER_ID}">
+  <div id="${CONTACT_BANNER_SUCCESS_ID}" class="${successClass}">
+    ${CONTACT_BANNER_SUCCESS_MESSAGE}
   </div>
-  <div id="contact-error" class="${errorClass}">
-    Something went wrong sending your message. Please try again later.
+  <div id="${CONTACT_BANNER_ERROR_ID}" class="${errorClass}">
+    ${CONTACT_BANNER_ERROR_MESSAGE}
   </div>
 </div>`.trim();
 
   return new Response(html, {
-    status: 200,
+    status: result.status ?? 200,
     headers: {
       "Content-Type": "text/html; charset=UTF-8",
       // Avoid caching of a one-off interaction response.
       "Cache-Control": "no-store",
+      // If any intermediary caching exists, vary by HTMX-ness.
+      Vary: "HX-Request",
     },
   });
 }

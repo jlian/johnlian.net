@@ -4,13 +4,6 @@
 {{ $turnstileSiteKey := .Get "turnstileSiteKey" | default site.Params.turnstileSiteKey }}
 {{ if eq $turnstileSiteKey ".Site.Params.turnstileSiteKey" }}{{ $turnstileSiteKey = "" }}{{ end }}
 
-<div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2">
-  Message sent successfully. Thank you for reaching out!
-</div>
-<div id="contact-error" class="dn pa3 mv3 bg-washed-red dark-red br2">
-  Something went wrong sending your message. Please try again later.
-</div>
-
 <form class="black-80 sans-serif" accept-charset="UTF-8" action="/api/contact" method="POST" role="form" name="contact">
 
     <label class="{{ $.Scratch.Get "labelClasses" }}"  for="name">Your Name</label>
@@ -33,6 +26,13 @@
 
     <div class="shadow-hover">
       <input class="db w-100 mv2 white pa3 bn hover-bg-black bg-animate bg-dark-gray" type="submit" value="Send" />
+    </div>
+
+    <div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2">
+      Message sent successfully. Thank you for reaching out!
+    </div>
+    <div id="contact-error" class="dn pa3 mv3 bg-washed-red dark-red br2">
+      Something went wrong sending your message. Please try again later.
     </div>
 
 </form>

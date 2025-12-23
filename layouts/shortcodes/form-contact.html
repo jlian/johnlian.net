@@ -39,28 +39,3 @@
 {{ if $turnstileSiteKey }}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{ end }}
-<script>
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var success = document.getElementById("contact-success");
-    var error = document.getElementById("contact-error");
-
-    if (params.get("sent") === "1" && success) {
-      success.classList.remove("dn");
-      success.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else if (params.get("error") === "1" && error) {
-      error.classList.remove("dn");
-      error.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      return;
-    }
-
-    params.delete("sent");
-    params.delete("error");
-    var newUrl =
-      window.location.pathname +
-      (params.toString() ? "?" + params.toString() : "") +
-      window.location.hash;
-    history.replaceState({}, "", newUrl);
-  })();
-</script>

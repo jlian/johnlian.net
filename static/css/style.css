@@ -13,6 +13,12 @@
   box-decoration-break: clone;
 }
 
+/* No-JS contact form success/error banners via URL fragment (#contact-success / #contact-error). */
+#contact-success:target,
+#contact-error:target {
+  display: block !important;
+}
+
 /* Negative letter-spacing (-0.05em) clips the last character;
    add extra right padding on top of the existing pa1 (0.25rem) */
 .pa1.tracked-tight {

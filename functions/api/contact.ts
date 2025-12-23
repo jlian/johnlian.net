@@ -13,8 +13,6 @@ type Env = {
 };
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const SUCCESS_REDIRECT = "/about/?sent=1";
-const ERROR_REDIRECT = "/about/?error=1";
 
 export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
   if (request.method !== "POST") {
@@ -26,7 +24,9 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
 
   try {
     const { name, email, message, turnstileToken } = await parseContactForm(request);
-    if (!name || !email || !message) return errorResponse(request, "Missing required fields", 400);
+    if (!name || !email || !message) {
+      return errorResponse(request, "Missing required fields", 400);
+    }
 
     const turnstileResult = await validateTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, request);
     if (!turnstileResult.ok) {
@@ -50,7 +50,11 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
       return errorResponse(request, "Email send failed", 502);
     }
 
-    return redirectResponse(request, SUCCESS_REDIRECT);
+    if (isHtmxRequest(request)) {
+      return contactBannerHtmlResponse({ ok: true });
+    }
+
+    return nonHtmxNotSupportedResponse();
   } catch (err) {
     console.error("Unhandled exception in /api/contact", err);
 
@@ -88,18 +92,50 @@ async function parseContactForm(request: Request): Promise<{
   }
 }
 
-function redirectResponse(request: Request, path: string) {
-  const redirectUrl = new URL(path, request.url).toString();
-  return Response.redirect(redirectUrl, 303);
-}
-
 function errorResponse(request: Request, message: string, status: number) {
-  if (acceptsHtml(request)) {
-    return redirectResponse(request, ERROR_REDIRECT);
+  if (isHtmxRequest(request)) {
+    return contactBannerHtmlResponse({ ok: false });
   }
+
   return new Response(message, {
     status,
     headers: { "Content-Type": "text/plain; charset=UTF-8" },
+  });
+}
+
+function nonHtmxNotSupportedResponse() {
+  return new Response("This contact form requires JavaScript (HTMX) to submit.", {
+    status: 400,
+    headers: { "Content-Type": "text/plain; charset=UTF-8" },
+  });
+}
+
+function isHtmxRequest(request: Request): boolean {
+  // htmx sends HX-Request: true for AJAX requests.
+  return request.headers.get("HX-Request") === "true";
+}
+
+function contactBannerHtmlResponse(result: { ok: boolean }) {
+  const successClass = result.ok ? "pa3 mv3 bg-washed-green dark-green br2" : "dn pa3 mv3 bg-washed-green dark-green br2";
+  const errorClass = result.ok ? "dn pa3 mv3 bg-washed-red dark-red br2" : "pa3 mv3 bg-washed-red dark-red br2";
+
+  const html = `
+<div id="contact-messages">
+  <div id="contact-success" class="${successClass}">
+    Message sent successfully. Thank you for reaching out!
+  </div>
+  <div id="contact-error" class="${errorClass}">
+    Something went wrong sending your message. Please try again later.
+  </div>
+</div>`.trim();
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html; charset=UTF-8",
+      // Avoid caching of a one-off interaction response.
+      "Cache-Control": "no-store",
+    },
   });
 }
 
@@ -260,7 +296,4 @@ async function storeMessage(
   }
 }
 
-function acceptsHtml(request: Request) {
-  const accept = request.headers.get("accept") || "";
-  return accept.includes("text/html");
-}
+// NOTE: We intentionally keep the interaction HTMX-only for simplicity.

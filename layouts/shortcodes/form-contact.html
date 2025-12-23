@@ -4,14 +4,26 @@
 {{ $turnstileSiteKey := .Get "turnstileSiteKey" | default site.Params.turnstileSiteKey }}
 {{ if eq $turnstileSiteKey ".Site.Params.turnstileSiteKey" }}{{ $turnstileSiteKey = "" }}{{ end }}
 
-<div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2">
-  Message sent successfully. Thank you for reaching out!
-</div>
-<div id="contact-error" class="dn pa3 mv3 bg-washed-red dark-red br2">
-  Something went wrong sending your message. Please try again later.
+<div id="contact-messages">
+  <div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2">
+    Message sent successfully. Thank you for reaching out!
+  </div>
+  <div id="contact-error" class="dn pa3 mv3 bg-washed-red dark-red br2">
+    Something went wrong sending your message. Please try again later.
+  </div>
 </div>
 
-<form class="black-80 sans-serif" accept-charset="UTF-8" action="/api/contact" method="POST" role="form" name="contact">
+<form
+  class="black-80 sans-serif"
+  accept-charset="UTF-8"
+  action="/api/contact"
+  method="POST"
+  role="form"
+  name="contact"
+  hx-post="/api/contact"
+  hx-target="#contact-messages"
+  hx-swap="outerHTML"
+>
 
     <label class="{{ $.Scratch.Get "labelClasses" }}"  for="name">Your Name</label>
     <input type="text" id="name" name="name" class="{{ $.Scratch.Get "inputClasses" }}"  required placeholder=" "  aria-labelledby="name"/>
@@ -39,28 +51,4 @@
 {{ if $turnstileSiteKey }}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{ end }}
-<script>
-  (function () {
-    var params = new URLSearchParams(window.location.search);
-    var success = document.getElementById("contact-success");
-    var error = document.getElementById("contact-error");
-
-    if (params.get("sent") === "1" && success) {
-      success.classList.remove("dn");
-      success.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else if (params.get("error") === "1" && error) {
-      error.classList.remove("dn");
-      error.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      return;
-    }
-
-    params.delete("sent");
-    params.delete("error");
-    var newUrl =
-      window.location.pathname +
-      (params.toString() ? "?" + params.toString() : "") +
-      window.location.hash;
-    history.replaceState({}, "", newUrl);
-  })();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" defer></script>

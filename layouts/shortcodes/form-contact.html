@@ -28,14 +28,14 @@
       <input class="db w-100 mv2 white pa3 bn hover-bg-black bg-animate bg-dark-gray" type="submit" value="Send" />
     </div>
 
-    <div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2">
-      Message sent successfully. Thank you for reaching out!
-    </div>
-    <div id="contact-error" class="dn pa3 mv3 bg-washed-red dark-red br2">
-      Something went wrong sending your message. Please try again later.
-    </div>
-
 </form>
+
+<div id="contact-success" class="dn pa3 mv3 bg-washed-green dark-green br2" aria-live="polite">
+  Message sent successfully. Thank you for reaching out!
+</div>
+<div id="contact-error" class="dn pa3 mv3 bg-washed-red dark-red br2" role="alert">
+  Something went wrong sending your message. Please try again later.
+</div>
 {{ if $turnstileSiteKey }}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{ end }}

@@ -10,52 +10,110 @@ featured_image: ""
 description: "Photo culling, playlist management, and pet insurance claims, all from a Raspberry Pi in my closet."
 ---
 
-I gave an AI agent access to my machines and told it to be useful. Here's what happened.
+I set up [OpenClaw](https://github.com/openclaw/openclaw) on a Raspberry Pi 5 in [my media closet](/posts/media-closet/), connected it to Discord, and pointed it at my other machines. It runs on the Pi for lightweight stuff and can delegate to a Hyper-V VM or my MacBook when it needs more compute.
 
-## The setup
+It came online February 26th. By the end of the 27th, it had done three things I'd been putting off.
 
-I've been running [OpenClaw](https://github.com/openclaw/openclaw) on a Raspberry Pi 5 that lives in [my media closet](/posts/media-closet/). It connects to Discord as a bot, and I can optionally connect other machines as "nodes" for heavier compute. Right now it talks to my Pi (always on, lightweight tasks), my MacBook (when it's around), and a Hyper-V VM on my desktop PC (the muscle). The agent has a persistent workspace with memory files it reads every session, so it builds context over time even though each conversation starts fresh.
+<!-- TODO: photo of the Pi in the media closet, maybe with a Discord notification on screen -->
 
-The whole thing came online on February 26th. By the end of February 27th, it had done three genuinely useful things I would have otherwise spent my evening on.
+## Photo culling without a single API call
 
-## 1. Photo culling with Apple's built-in ML
+I shoot birds with a Sony α6700. A typical session produces 100-200 photos, most of which are duplicates or near-misses. I asked the agent to build something that could automatically pick the keepers.
 
-I shoot birds with a Sony α6700 and end up with 100-200 photos per session. Reviewing them all is tedious. I wanted the agent to build an automated culling pipeline.
+The obvious approach is sending photos to a vision model for quality scoring. That works, but it's slow and costs money per image. The agent went a different direction entirely: it found that **Apple Photos already runs ML models on every photo in your library**. Sharpness, composition, subject interest, lighting, bokeh quality, clutter detection, all scored and stored locally. You can read all of it through [osxphotos](https://github.com/RhetTbull/osxphotos), a Python library for querying the Photos database. No cloud API, no GPU, no model inference. The scores are just sitting there, already computed, for every photo you've ever taken.
 
-The clever part: instead of sending every photo to a vision API (expensive, slow), the agent discovered that Apple Photos already scores every image with ML models for sharpness, composition, interesting subject, lighting, and more. These scores are accessible through [osxphotos](https://github.com/RhetTbull/osxphotos). So the pipeline:
+That discovery short-circuited the entire project. Instead of building an expensive vision pipeline, we could just do math on existing data.
 
-1. Export photo metadata via osxphotos (no pixels leave the machine)
-2. Compute a composite quality score from Apple's ML fields
-3. Cluster similar shots using perceptual fingerprint distance + person overlap + time proximity
-4. Keep the best per cluster, favorite them in Photos
+<!-- TODO: screenshot of osxphotos score fields for a sample photo showing all the ML dimensions -->
 
-We tested it on 203 photos from a Super Bowl party and hit 87% agreement with my manual cull decisions. Zero API calls, zero cost. The biggest lesson was that Apple's `sharply_focused_subject` score measures depth-of-field, not actual focus, so fast lenses like my Viltrox 75mm f/1.2 fool it. The agent documented this and tuned the weights accordingly.
+### Optimizing the weights
 
-## 2. Apple Music playlist management
+We tested on 203 photos from a Super Bowl party (Sony α6700, Viltrox 75mm f/1.2). I'd already manually culled these down to 80 keepers, so we had ground truth to train against.
 
-I maintain two DJ-style playlists where songs are ordered by [Camelot key](https://mixedinkey.com/camelot-wheel/) for harmonic mixing. Adding a new song means: look up the BPM and Camelot key (usually on Tunebat), find the song in Apple Music's catalog, add it to the playlist, then set the metadata (BPM in the native field, Camelot key in the Grouping field) via AppleScript. It's five minutes of tedious work per song.
+The pipeline clusters similar shots by perceptual fingerprint distance, detected people overlap, and timestamps, then keeps the best per cluster based on a composite quality score. The optimization was finding the right weights for each of Apple's ML fields.
 
-The agent set up MusicKit API auth on my Mac, built a workflow around the catalog search + playlist add endpoints, and handled the AppleScript metadata tagging. I asked it to add five songs and it knocked them all out, including looking up each key on Tunebat via browser automation. Now the whole process is: I say "add [song] to BB2" and it handles the rest.
+Here's what the grid search settled on:
 
-Not groundbreaking, but the kind of chore that accumulates. Five songs times five minutes each is almost half an hour I got back.
+| Score field | Weight | What it means |
+|---|---|---|
+| `tastefully_blurred` | 0.922 | Bokeh quality |
+| `well_chosen_subject` | 0.828 | Good subject selection |
+| `well_framed_subject` | 0.680 | Framing/composition |
+| `pleasant_lighting` | 0.607 | Lighting quality |
+| `overall` | 0.550 | Apple's combined score |
+| `interesting_subject` | 0.514 | Subject interest |
+| `well_timed_shot` | 0.479 | Timing |
+| `pleasant_composition` | 0.460 | Composition |
+| `sharply_focused_subject` | 0.254 | Focus (kind of) |
+| `intrusive_object_presence` | -0.966 | Clutter penalty |
 
-## 3. Filing a pet insurance claim
+A few things jump out. `tastefully_blurred` and `well_chosen_subject` dominate, which makes sense for event photos shot on a fast prime: the best shots tend to be the ones where someone is well-separated from the background with clean bokeh. `intrusive_object_presence` gets the strongest negative weight, heavily penalizing cluttered frames.
 
-This one surprised me. Our cat Lexie is going through oncology treatment, and I needed to file a claim on Nationwide's pet insurance portal. I sent the agent the invoice PDF and a medical record, and asked it to file the claim.
+And then there's `sharply_focused_subject` at a surprisingly low 0.254. We found out the hard way that this score doesn't measure actual focus accuracy. It measures depth-of-field separation. A completely misfocused shot at f/1.2 can score high because the background blur is dramatic. The optimization correctly figured out this field is unreliable and downweighted it.
 
-The portal turned out to be an Angular app that actively resists automation. Standard browser automation (click this button, fill this field) failed at almost every step:
+The weights also tell a story about my preferences. Heavy on bokeh and subject isolation, low tolerance for clutter. That tracks.
 
-- **Form fields** wouldn't accept typed input. The agent had to use JavaScript to call native value setters on the DOM elements and manually dispatch `input` and `change` events to trigger Angular's change detection.
-- **The file upload input** silently ignored the standard upload API (reported success, attached nothing). Clicking the upload button opened a native OS file dialog that froze the browser tab. The workaround: spin up a local HTTP server on the VM, `fetch()` the PDF from within the page context, construct a `File` object via the `DataTransfer` API, and inject it into the file input.
-- **The terms checkbox** would uncheck itself when clicked normally. Had to set `.checked = true` via JavaScript and dispatch events manually.
-- **Buttons** that appeared in the page snapshot wouldn't respond to clicks. Had to use `element.click()` through JavaScript evaluation.
+<!-- TODO: side-by-side of a high sharply_focused_subject misfocused f/1.2 shot vs a genuinely sharp one -->
 
-Despite all that, it filled the form, uploaded both documents, accepted the terms, and submitted successfully. The whole thing took about 45 minutes of back-and-forth, but now it's saved as a reusable skill. Next claim should take under five minutes.
+### Results
 
-## The meta thing
+**87.2% agreement** with my manual decisions (F1: 0.841). Not perfect, but the remaining ~13% error is mostly stuff no ML model can measure: "only shot of this person at the event," "blurry but funny expression," "technically mediocre but I like it." The plan is to run a vision model on just the borderline photos to close the gap, maybe 30-40 images instead of 203.
 
-What strikes me isn't any single task. It's that the agent figured out workarounds for problems I wouldn't have had the patience to debug myself. I would have just filled in the insurance form manually. I definitely wouldn't have discovered that Apple Photos has ML quality scores accessible through a Python library. And I certainly wouldn't have spent an evening writing AppleScript to tag Camelot keys in playlist metadata.
+The fields `curation`, `noise`, and `fail` turned out to be useless for culling (almost zero variance across all photos). And `interesting_subject` showed the biggest delta between the top 20 and bottom 20 photos (+0.92), making it the single most predictive field for good-vs-bad.
 
-The agent did all of this from a $60 Raspberry Pi in a closet, delegating heavy work to my desktop VM when needed. It documented everything it learned in memory files so it can pick up where it left off next session. That's the part that feels genuinely new: not a one-shot demo, but something that accumulates capability over time.
+<!-- TODO: the agent's message in #photos about discovering Apple ML scores, showing the "wait, they're already scored?" moment -->
 
-It also named itself. But that's a story for another post.
+## Apple Music Automix playlists
+
+I've been maintaining two DJ-style playlists on Apple Music since last summer, when Apple introduced Automix (crossfade between tracks). The concept: order songs by [Camelot key](https://mixedinkey.com/camelot-wheel/) so adjacent tracks are harmonically compatible, and match BPMs so the crossfade doesn't sound jarring.
+
+Getting there is painful. For each new song:
+
+1. Look up its BPM and Camelot key (usually on [Tunebat](https://tunebat.com/))
+2. Find the right version in Apple Music's catalog
+3. Add it to the playlist
+4. Tag the metadata: BPM in the native field, Camelot key in the Grouping field (Apple Music doesn't expose key/BPM data through its API, so I store it manually)
+5. Drag it into position based on its Camelot key
+6. Listen to the two new transitions (the songs before and after it)
+7. If a transition doesn't sound right, move the song and listen to the transitions at the new position, plus the new transition at the gap you left behind
+8. Repeat until it fits
+
+That last part is the killer. Moving one song creates three new transitions to evaluate: two at the destination, one at the source. If those don't work either, you're suddenly five transitions deep. I spent dozens of hours on this when I first built the playlists.
+
+The agent can't help with the listening and repositioning yet (that's a taste problem). But it automated steps 1-4 completely. It set up MusicKit API auth on my Mac, built a workflow around catalog search and playlist endpoints, looked up Camelot keys on Tunebat via browser automation, and handled the AppleScript metadata tagging. I asked it to add five songs and it handled all of them end to end.
+
+The process now: I say "add [song] to BB2" in Discord and it does the lookup, catalog match, playlist add, and metadata tag. Five songs that would have taken 25+ minutes of tab-switching took a few minutes of back-and-forth.
+
+<!-- TODO: screenshot of the playlist in Music app showing the Grouping/BPM metadata columns -->
+
+## Filing a pet insurance claim
+
+Our cat Lexie is going through oncology treatment, and I needed to file a claim on Nationwide's pet insurance portal. I sent the agent the invoice PDF and medical record and told it to file the claim.
+
+Nationwide's portal is an Angular app, and it fought the agent at every step.
+
+**Form fields** ignored typed input. The agent had to call native DOM value setters in JavaScript and manually fire `input` and `change` events to get Angular's change detection to notice.
+
+**The terms checkbox** unchecked itself when clicked normally. Buttons visible in the page DOM didn't respond to click events. Everything had to go through JavaScript `evaluate` calls.
+
+But the file upload was the real adventure. The standard browser upload API reported success but attached nothing. Clicking the upload button opened a native OS file dialog that froze the browser tab entirely. After several failed approaches, the agent's solution was:
+
+1. Copy the PDF to the VM ✓ (normal)
+2. **Start a CORS-enabled HTTP server on the VM** (less normal)
+3. `fetch()` the PDF from within the page context, construct a `File` object via the `DataTransfer` API, and inject it into the file input
+
+Step 2 is where I lost it. The agent had to stand up a web server to upload a file. But it worked. Angular's change detection picked up the injected file, and the upload went through.
+
+<!-- TODO: screenshot of the skill file showing "Step 2: Start CORS HTTP server on VM", or the Discord exchange about it -->
+
+The checkbox `.click()` would *uncheck* itself. Buttons with visible refs wouldn't respond to clicks. The file input ignored the standard upload protocol entirely. If someone was using a screen reader on that site, I'd feel for them.
+
+The whole interaction is now saved as a reusable skill, so the next claim is just "here's the invoice" and done.
+
+## What's next
+
+The agent writes everything it learns to memory files that persist across sessions. The photo culling weights, the Angular workarounds, the MusicKit auth flow. Next time it wakes up, it reads those files and picks up where it left off.
+
+For photos, the next step is refining the weights on bird photography (different genre, different scoring priorities) and running a vision model pass on just the borderline shots. For playlists, the dream is automating the transition-listening loop, but that's a harder problem. For insurance claims, hopefully we just don't need too many of those.
+
+<!-- TODO: closing photo of the media closet, or a diagram of Pi + VM + MacBook setup -->

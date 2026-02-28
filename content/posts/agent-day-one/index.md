@@ -1,5 +1,5 @@
 ---
-title: "What my AI agent did on its first day"
+title: "Things I noticed while using an AI agent for everyday tasks"
 date: 2026-02-27T20:00:00-08:00
 tags:
 - ai
@@ -7,12 +7,12 @@ tags:
 - openclaw
 - raspberry pi
 featured_image: ""
-description: "Photo culling, playlist management, and pet insurance claims, all from a Raspberry Pi in my closet."
+description: "Observations from letting an AI agent handle photo culling, playlist management, and a pet insurance claim."
 ---
 
 I set up [OpenClaw](https://github.com/openclaw/openclaw) on a Raspberry Pi 5 in [my media closet](/posts/media-closet/), connected it to Discord, and pointed it at my other machines. It runs on the Pi for lightweight stuff and can delegate to a Hyper-V VM or my MacBook when it needs more compute.
 
-It came online February 26th. By the end of the 27th, it had done three things I'd been putting off.
+I gave it three things I'd been putting off. They all got done, but the interesting part was what I noticed along the way.
 
 <!-- TODO: photo of the Pi in the media closet, maybe with a Discord notification on screen -->
 
@@ -110,7 +110,9 @@ The checkbox `.click()` would *uncheck* itself. Buttons with visible refs wouldn
 
 The whole interaction is now saved as a reusable skill, so the next claim is just "here's the invoice" and done.
 
-## What's next
+## The pattern
+
+The thing that surprised me most wasn't any individual task. It was how each one followed the same arc: I described the problem, the agent tried the obvious approach, hit something unexpected, and that unexpected thing turned out to be the most interesting part. Apple Photos already scoring every image. Angular fighting its own UI. A local web server as a file upload workaround.
 
 The agent writes everything it learns to memory files that persist across sessions. The photo culling weights, the Angular workarounds, the MusicKit auth flow. Next time it wakes up, it reads those files and picks up where it left off.
 

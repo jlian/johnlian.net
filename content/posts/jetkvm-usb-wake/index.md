@@ -22,6 +22,8 @@ JetKVM is a great device. It already has a Wake-on-LAN button built in, and I se
 
 The PC in question is "Tomahawk," a Windows 11 desktop that lives in a media closet and sleeps after 30 minutes of inactivity. JetKVM connects via HDMI (through a DP-to-HDMI adapter) and USB-C, giving me a browser-based remote desktop. When the PC is awake, it works great. When it sleeps, JetKVM shows "No HDMI signal detected" and every keystroke I send disappears.
 
+![JetKVM web UI showing "No HDMI signal detected" when the host PC is asleep](no-hdmi-signal.png)
+
 A real USB keyboard wakes Tomahawk instantly. JetKVM pretends to be a USB keyboard. It should work. It doesn't.
 
 ## Why it doesn't work
@@ -99,6 +101,8 @@ Upstream Linux 6.x removed this loop entirely (the commit message calls it "racy
 
 Build #5 (both patches together): it works. Tomahawk wakes up. About 14 seconds from HID write to the host being reachable.
 
+![JetKVM showing the Windows desktop after a successful USB wake from S3](jetkvm-awake.png)
+
 ### Isolating the fix
 
 I wanted a minimal PR, so I tested build #6 with only the f_hid patch and stock DWC3 code. It failed. Tomahawk stayed asleep. At that point I figured both patches were required.
@@ -125,8 +129,6 @@ The two "failed to send remote wakeup" messages in dmesg are cosmetic (Recovery 
 Earlier in the day, before any kernel patches, I tried waking Tomahawk by poking DWC3 registers directly via `devmem`. The DCTL register (device control) is at `0xffb0c704`. I wanted to write Recovery (value 8) into bits [8:5].
 
 It appeared to work. Then I realized I'd been writing to `0xffb0c700`, which is DALEPENA (active endpoint enable), not DCTL. The two registers are 4 bytes apart. Writing an unexpected value to DALEPENA probably caused a USB bus fault that the host xHCI interpreted as a wake event. Not proper remote wakeup, just an accidental electrical glitch. Amusing in hindsight, confusing at the time.
-
-![JetKVM web UI showing "No HDMI signal detected" when the host PC is asleep](no-hdmi-signal.png)
 
 ## Results
 

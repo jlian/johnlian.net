@@ -41,16 +41,21 @@ The bad news: the `wakeup_on_write` patch that hooks into f_hid was never upstre
 Here's the full path a keystroke takes to wake the host:
 
 ```mermaid
-flowchart LR
-    A[Browser keystroke] --> B[JetKVM Go app]
-    B --> C["write() to /dev/hidg0"]
-    C --> D["f_hidg_write()"]
-    D --> E["usb_gadget_wakeup() ✨ NEW"]
-    E --> F["dwc3_gadget_wakeup()"]
-    F --> G[Recovery → DCTL register]
-    G --> H[USB resume signal on bus]
-    H --> I[Intel xHCI detects resume]
-    I --> J[Windows wakes from S3]
+sequenceDiagram
+    participant Browser
+    participant Go as JetKVM Go App
+    participant HID as f_hid kernel driver
+    participant DWC3 as DWC3 USB Controller
+    participant Host as Sleeping PC
+
+    Browser->>Go: keystroke
+    Go->>HID: write to /dev/hidg0
+    Note over HID: wakeup_on_write = 1
+    HID->>DWC3: usb_gadget_wakeup()
+    Note over DWC3: Write Recovery to DCTL
+    DWC3->>Host: USB resume signal
+    Note over Host: xHCI detects resume
+    Host-->>Browser: Windows wakes from S3
 ```
 
 Two changes needed:

@@ -164,8 +164,6 @@ Measured from keypress in the browser to first video frame playing. I instrument
 
 The ~22 second gap between "PC is network-reachable" and "video is playing in the browser" is mostly Windows GPU resume time: the GPU powers up from D3, reinitializes the display driver, and starts outputting HDMI again. That takes about 20 seconds on this machine (Intel Z390 + NVIDIA GPU) and is entirely outside JetKVM's control. The remaining ~2 seconds is JetKVM's capture pipeline restarting and WebRTC renegotiating.
 
-<!-- TODO: Screenshot of powercfg /lastwake output showing Intel USB xHCI -->
-
 ## The PRs
 
 Three PRs to make this work upstream:

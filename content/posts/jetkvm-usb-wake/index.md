@@ -126,7 +126,7 @@ Earlier in the day, before any kernel patches, I tried waking Tomahawk by poking
 
 It appeared to work. Then I realized I'd been writing to `0xffb0c700`, which is DALEPENA (active endpoint enable), not DCTL. The two registers are 4 bytes apart. Writing an unexpected value to DALEPENA probably caused a USB bus fault that the host xHCI interpreted as a wake event. Not proper remote wakeup, just an accidental electrical glitch. Amusing in hindsight, confusing at the time.
 
-<!-- TODO: Screenshot of JetKVM web UI showing "No HDMI signal detected" overlay -->
+![JetKVM web UI showing "No HDMI signal detected" when the host PC is asleep](no-hdmi-signal.png)
 
 ## Results
 

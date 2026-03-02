@@ -89,6 +89,7 @@ for (retries = 20000; retries > 0; retries--) {
     reg = dwc3_readl(dwc->regs, DWC3_DSTS);
     if (DWC3_DSTS_USBLNKST(reg) == DWC3_LINK_STATE_U0)
         break;
+    udelay(100);
 }
 ```
 

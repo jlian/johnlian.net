@@ -16,6 +16,8 @@ JetKVM is a great device. It already supports Wake-on-LAN out of the box, and I 
 
 [^nginx]: The JetKVM web UI binds to its local IP. I set up nginx on a separate machine as a reverse proxy with a proper domain and TLS cert, so I can reach the KVM dashboard remotely. WebRTC video doesn't work through the proxy (it needs direct UDP), but the controls and status page do, and that's enough to trigger a WoL packet or check if the host is up.
 
+<!-- TODO: Photo of JetKVM connected to Tomahawk in the media closet (HDMI+USB) -->
+
 ## The setup
 
 The PC in question is "Tomahawk," a Windows 11 desktop that lives in a media closet and sleeps after 30 minutes of inactivity. JetKVM connects via HDMI (through a DP-to-HDMI adapter) and USB-C, giving me a browser-based remote desktop. When the PC is awake, it works great. When it sleeps, JetKVM shows "No HDMI signal detected" and every keystroke I send disappears.
@@ -118,6 +120,8 @@ Earlier in the day, before any kernel patches, I tried waking Tomahawk by poking
 
 It appeared to work. Then I realized I'd been writing to `0xffb0c700`, which is DALEPENA (active endpoint enable), not DCTL. The two registers are 4 bytes apart. Writing an unexpected value to DALEPENA probably caused a USB bus fault that the host xHCI interpreted as a wake event. Not proper remote wakeup, just an accidental electrical glitch. Amusing in hindsight, confusing at the time.
 
+<!-- TODO: Screenshot of JetKVM web UI showing "No HDMI signal detected" overlay -->
+
 ## Results
 
 ### Raw USB wake time (SSH to JetKVM, write to /dev/hidg0)
@@ -153,6 +157,8 @@ Measured from keypress in the browser to first video frame playing. I instrument
 | **Avg** | **26.3s** |
 
 The ~22 second gap between "PC is network-reachable" and "video is playing in the browser" is mostly Windows GPU resume time: the GPU powers up from D3, reinitializes the display driver, and starts outputting HDMI again. That takes about 20 seconds on this machine (Intel Z390 + NVIDIA GPU) and is entirely outside JetKVM's control. The remaining ~2 seconds is JetKVM's capture pipeline restarting and WebRTC renegotiating.
+
+<!-- TODO: Screenshot of powercfg /lastwake output showing Intel USB xHCI -->
 
 ## The PRs
 

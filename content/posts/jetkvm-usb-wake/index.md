@@ -1,6 +1,7 @@
 ---
 title: "I had to patch the Linux kernel to wake my PC using a browser, again"
 date: 2026-03-02T08:00:00-08:00
+draft: true
 tags:
 - jetkvm
 - linux
@@ -14,9 +15,7 @@ Three years ago I [patched the Raspberry Pi kernel](https://johnlian.net/posts/t
 
 JetKVM is a great device. It already has a Wake-on-LAN button built in, and I set up nginx in front of it for remote access and automated WoL[^nginx]. But the one thing it couldn't do was wake my PC over USB, the same way a real keyboard would. [Issue #120](https://github.com/jetkvm/kvm/issues/120) had been open for a while with community interest, and since I'd [already solved this exact problem](https://johnlian.net/posts/tinypilot-usb-wake/) on different hardware, I figured I should take a crack at it.
 
-[^nginx]: There's a little more to it. The JetKVM web UI binds to its local IP, so I put nginx on a Raspberry Pi with a domain and TLS cert to make it reachable remotely. Then I added `mirror /wake-trigger` to the proxy `location /` block, which fires a WoL CGI script on every proxied request. Since the JetKVM UI makes dozens of requests on load (assets, API calls, WebSocket upgrade), opening the dashboard carpet-bombs the PC with wake packets. The PC is usually already booting by the time the page finishes loading. This is absolutely overkill. For full remote access including video, I use Tailscale, which works perfectly since WebRTC can traverse the tunnel.
-
-<!-- TODO: Photo of JetKVM connected to Tomahawk in the media closet (HDMI+USB) -->
+[^nginx]: There's a little more to it. The JetKVM web UI binds to its local IP, so I put nginx on a Raspberry Pi with a domain and TLS cert to make it reachable remotely. Then I added `mirror /wake-trigger;` to the proxy `location /` block, which fires a WoL CGI script on every proxied request. Since the JetKVM UI makes dozens of requests on load (assets, API calls, WebSocket upgrade), opening the dashboard carpet-bombs the PC with wake packets. The PC is usually already booting by the time the page finishes loading. This is absolutely overkill. For full remote access including video, I use Tailscale, which works perfectly since WebRTC can traverse the tunnel.
 
 ## The setup
 
@@ -141,7 +140,7 @@ Measured from HID write completion to first successful ping response from the ho
 | 1   | 4,016ms   |
 | 2   | 4,015ms   |
 | 3   | 4,013ms   |
-| **Avg** | **4.0s** |
+| **Avg** | **4,015ms** |
 
 Very consistent. The ~4 seconds is the PC's S3 resume time, not USB signaling latency.
 

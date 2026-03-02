@@ -17,6 +17,8 @@ JetKVM is a great device. It already has a Wake-on-LAN button built in, and I se
 
 [^nginx]: There's a little more to it. The JetKVM web UI binds to its local IP, so I put nginx on a Raspberry Pi with a domain and TLS cert to make it reachable remotely. Then I added `mirror /wake-trigger;` to the proxy `location /` block, which fires a WoL CGI script on every proxied request. Since the JetKVM UI makes dozens of requests on load (assets, API calls, WebSocket upgrade), opening the dashboard carpet-bombs the PC with wake packets. The PC is usually already booting by the time the page finishes loading. This is absolutely overkill. For full remote access including video, I use Tailscale, which works perfectly since WebRTC can traverse the tunnel.
 
+<!-- TODO: Photo of JetKVM connected to Tomahawk in the media closet (HDMI+USB) -->
+
 ## The setup
 
 The PC in question is "Tomahawk," a Windows 11 desktop that lives in a media closet and sleeps after 30 minutes of inactivity. JetKVM connects via HDMI (through a DP-to-HDMI adapter) and USB-C, giving me a browser-based remote desktop. When the PC is awake, it works great. When it sleeps, JetKVM shows "No HDMI signal detected" and every keystroke I send disappears.

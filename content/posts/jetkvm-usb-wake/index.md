@@ -171,11 +171,13 @@ The ~22 second gap between "PC is network-reachable" and "video is playing in th
 
 Three PRs to make this work upstream:
 
-1. **[jetkvm/rv1106-system#57](https://github.com/jetkvm/rv1106-system/pull/57)**: kernel f_hid `wakeup_on_write` patch (2 files, 17 lines)
-2. **[jetkvm/kvm#1235](https://github.com/jetkvm/kvm/pull/1235)**: Go app `bmAttributes=0xa0` + `wakeup_on_write=1` (4 files, 5 lines)
-3. **[jetkvm/kvm#1236](https://github.com/jetkvm/kvm/pull/1236)** (draft): "Try Wake Host" button in the no-signal overlay
+1. **[jetkvm/rv1106-system#57](https://github.com/jetkvm/rv1106-system/pull/57)**: kernel f_hid `wakeup_on_write` patch (2 files, 17 lines) — **merged**
+2. **[jetkvm/kvm#1235](https://github.com/jetkvm/kvm/pull/1235)**: Go app `bmAttributes=0xa0` + `wakeup_on_write=1` (4 files, 5 lines) — **merged, shipped in [firmware 0.5.5](https://github.com/jetkvm/kvm/releases/tag/release/0.5.5)**
+3. **[jetkvm/kvm#1236](https://github.com/jetkvm/kvm/pull/1236)** (draft): "Try Wake Host" button in the no-signal overlay — still open
 
-The kernel patch needs to land first. Without it, the Go app changes advertise remote wakeup capability but can't deliver on it. The UI button depends on both.
+The Go app change shipped first in firmware 0.5.5 (March 31, 2026). The kernel patch merged a few days later and is on the `dev` branch of rv1106-system, pending the next system image release. Once both land in a production firmware, USB wake will work out of the box for all JetKVM users.
+
+The JetKVM team also added [end-to-end S3 suspend/wake tests](https://github.com/jetkvm/kvm/pull/1392) in firmware 0.5.6, which is a nice sign that this is being treated as a first-class feature going forward.
 
 ## One caveat
 
@@ -185,4 +187,4 @@ USB wake only works if JetKVM was enumerated by the host *before* it entered sle
 
 Same bug, different hardware, same 17-line patch to `f_hid.c`. The PiKVM project's `wakeup_on_write` addition to the HID gadget driver is something that really should be in mainline Linux. Every USB gadget KVM hits this: TinyPilot, PiKVM, JetKVM, NanoKVM. Until it's upstreamed, we'll keep porting it to each new device.
 
-Thanks to [@mdevaev](https://github.com/mdevaev) for the original patch that started all of this, and to the JetKVM team for building a device good enough that I wanted to fix the one thing it couldn't do.
+Thanks to [@mdevaev](https://github.com/mdevaev) for the original patch that started all of this, and to the [JetKVM team](https://github.com/jetkvm) for merging both PRs and building a device good enough that I wanted to fix the one thing it couldn't do.

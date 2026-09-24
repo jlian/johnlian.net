@@ -6,9 +6,10 @@ File:Example.jpg|Optional caption/alt text
 File:Another.jpg
 {{< /commons-gallery >}}
 */}}
-{{- $width := .Get "width" | default "1200" -}}
+{{- $maxWidth := int (.Get "width" | default "1440") -}}
 {{- $items := split (trim .Inner "\n\r\t ") "\n" -}}
 {{- $columnWidth := .Get "columnWidth" | default "320px" -}}
+{{- $sizes := .Get "sizes" | default "(max-width: 900px) calc(100vw - 2rem), 22.25rem" -}}
 {{- if not ($.Page.Scratch.Get "commonsGalleryStyleAdded") -}}
 <style>
 .commons-gallery {
@@ -33,11 +34,22 @@ File:Another.jpg
       {{- if ge (len $parts) 2 }}{{- $caption = trim (index $parts 1) " \t\r\n" -}}{{- else }}{{- $caption = trim (replaceRE "^File:" "" $file) " \t\r\n" -}}{{- end -}}
       {{- $fileUnderscored := replace $file " " "_" -}}
       {{- $fileEscaped := urlquery $fileUnderscored -}}
-      {{- $filePath := printf "https://commons.wikimedia.org/wiki/Special:FilePath/%s?width=%s" $fileEscaped $width -}}
+      {{- $fallbackWidth := 720 -}}
+      {{- if lt $maxWidth $fallbackWidth }}{{- $fallbackWidth = $maxWidth -}}{{- end -}}
+      {{- $fallbackSrc := printf "https://commons.wikimedia.org/wiki/Special:FilePath/%s?width=%d" $fileEscaped $fallbackWidth -}}
       {{- $fileLink := printf "https://commons.wikimedia.org/wiki/%s" $fileUnderscored -}}
+      {{- $srcsetEntries := slice -}}
+      {{- range slice 480 720 960 1200 1440 }}
+        {{- if le . $maxWidth }}
+          {{- $srcsetEntries = $srcsetEntries | append (printf "https://commons.wikimedia.org/wiki/Special:FilePath/%s?width=%d %dw" $fileEscaped . .) -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if eq (len $srcsetEntries) 0 -}}
+        {{- $srcsetEntries = $srcsetEntries | append (printf "%s %dw" $fallbackSrc $fallbackWidth) -}}
+      {{- end -}}
       <div class="commons-gallery__item">
         <a class="db" href="{{ $fileLink }}" target="_blank" rel="noopener">
-          <img class="db w-100" src="{{ $filePath }}" alt="{{ $caption }}" loading="lazy">
+          <img class="db w-100" src="{{ $fallbackSrc }}" srcset="{{ delimit $srcsetEntries ", " }}" sizes="{{ $sizes }}" alt="{{ $caption }}" loading="lazy" decoding="async">
         </a>
       </div>
     {{- end -}}

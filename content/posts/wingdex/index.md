@@ -20,7 +20,7 @@ draft: true
 
 <!-- TODO(John): BEFORE PUBLISHING. config.toml sets goldmark unsafe = true, so every HTML comment in this file ships in the page source. Remove every "TODO(" comment (`grep -n 'TODO(' content/posts/wingdex/index.md` should print nothing), then set draft: false. -->
 
-<!-- TODO(John): [P1] hero photo. Leading candidate: the January sunbird (also photo X if it qualifies; see the outline's photo X criteria). Which species, and where? Confirmed: a Fork-tailed Sunbird, Zhangzhou, Jan 1, 2026, 09:59 (screenshot placed in section 12). "Taiwan, China and Japan" and "By January 19" still read fine, since Jan 1 was mid-trip. It now also carries the section 2 thread: it was the first bird to fall through the BirdLife/eBird taxonomy gap (your memory; the repo doesn't say whose photo it was). -->
+<!-- TODO(John): [P1] hero photo. The January sunbird (not photo X: vision-only already ranks Fork-tailed #1, so photo X still needs picking; see the outline's criteria). Which species, and where? Confirmed: a Fork-tailed Sunbird, Zhangzhou, Jan 1, 2026, 09:59 (screenshot placed in section 12). "Taiwan, China and Japan" and "By January 19" still read fine, since Jan 1 was mid-trip. It now also carries the section 2 thread: it was the first bird to fall through the BirdLife/eBird taxonomy gap (your memory; the repo doesn't say whose photo it was). -->
 
 On January 19, right after a trip through Taiwan, China and Japan, I had about 100 culled bird photos from my a6700 (shot with [the bird button](/posts/tracking-expand-spot-bird-button/)), and I didn't know what most of them were, so I sat down with [Merlin](https://merlin.allaboutbirds.org/) to go through them.
 
@@ -359,7 +359,6 @@ On held-out photos with their location and date, the shipped pipeline gets 94.27
 
 The sunbird from the top of this post, the one that fell through the taxonomy gap in March, gets this today:
 
-<!-- TODO(John): photo X check. Run with the prior off; if vision-only ranks Crimson Sunbird first, this is R1→R5. Otherwise it stays the hero, not photo X. -->
 <!-- TODO(John): consider crop/size/pairing -->
 
 ![My sunbird photo from Zhangzhou, Jan 1, 2026, 09:59. WingDex says Fork-tailed Sunbird 83%, then Crimson Sunbird 6%, Black-throated 5%, Temminck's 2% and Crimson-backed 1%, the last four with the rarity badge](sunbird-zhangzhou.png)

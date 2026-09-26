@@ -248,7 +248,7 @@ score = sim/T + beta * log P(species | cell, month)
 
 ### What the world range map was worth
 
-iNaturalist sightings did the heavy lifting, and adding the month helped a little. Adding BirdLife on top was worth 0.30 points, and on August 5 the 681K-blob range system went out with GPT. Every test photo came from iNaturalist and so did the prior, so for evaluation only I built an independent one from GBIF with iNaturalist excluded, which is mostly GBIF's public, CC BY 4.0 [eBird Observation Dataset](https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e). Its fitted weight came out to exactly 0.0.[^ablation]
+iNaturalist sightings did the heavy lifting, and adding the month helped a little. Adding BirdLife on top was worth 0.30 points, and on August 5 the 681K-blob range system went out with GPT. Every test photo came from iNaturalist and so did the prior, so as a sanity check that the prior wasn't flattering itself, I also fit one from GBIF with iNaturalist excluded, which is mostly GBIF's public, CC BY 4.0 [eBird Observation Dataset](https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e). It never left testing, and its fitted weight came out to exactly 0.0.[^ablation]
 
 <!-- TODO(John): [D13] ablation bars (iNat, +month, +BirdLife, GBIF). -->
 
@@ -264,7 +264,7 @@ A prior can only separate birds that live in different places. Lookalikes that s
 
 [^bayes]: Textbook Bayes would divide out the training set's species mix before multiplying by the local prior, because the model's output already reflects how often each species appeared in training. It barely matters here, because the corpus has a floor of 50 and a cap of 500 photos per species, so the training mix is fairly flat. What's left is up to a 10x spread between floor and cap, plus whatever skew BioCLIP-2 (trained on the uncapped TreeOfLife-200M) passed down. Fitting `T` and `beta` by log loss is calibration, not inference.
 
-[^ablation]: On the iNaturalist calibration split: the iNaturalist prior is worth +15.05 points of top-1 over vision alone, the month +1.2, and BirdLife +0.30 on top. A two-year-stale prior costs 2.88 points, so it gets refreshed quarterly. The GBIF prior used the same 27 km grid, and naively adding its counts to iNaturalist's cost 1.44 points. My guess is that eBird checklists record what birders go looking for, not what people photograph, and the test photos are iNaturalist photos, so the iNaturalist prior has a home-field advantage. With a fitted weight of 0.0, the GBIF prior never shipped.
+[^ablation]: On the iNaturalist calibration split: the iNaturalist prior is worth +15.05 points of top-1 over vision alone, the month +1.2, and BirdLife +0.30 on top. A two-year-stale prior costs 2.88 points, so it gets refreshed quarterly. The GBIF check used the same 27 km grid, and naively adding its counts to iNaturalist's cost 1.44 points. My guess is that eBird checklists record what birders go looking for, not what people photograph, and the test photos are iNaturalist photos, so the iNaturalist prior has a home-field advantage.
 
 [^nan]: Another regression test exists because of a month that wasn't a number. `NaN < 1` and `NaN > 12` are both false, so a missing month passed the range check, and then `| 0` turned it into January.
 
@@ -399,7 +399,7 @@ And the folder that started this, on an iPhone in airplane mode, in one pass:
 
 ## Dozens of us
 
-Everything is out there: [the app](https://wingdex.app), [the repo](https://github.com/jlian/wingdex), the [model card](https://github.com/jlian/wingdex/blob/main/ml/README.md) (which is long, sorry), and the weights under CC BY-NC. None of it exists without [BioCLIP](https://imageomics.github.io/bioclip-2/) and Imageomics, the iNaturalist photographers, [NABirds](https://dl.allaboutbirds.org/nabirds) and the Cornell Lab, OpenStreetMap, and AviList and eBird.
+Everything is out there: [the app](https://wingdex.app), [the repo](https://github.com/jlian/wingdex), the [model card](https://github.com/jlian/wingdex/blob/main/ml/README.md) (which is long, sorry), and the weights under CC BY-NC. The model, the prior and every test photo came from [iNaturalist](https://www.inaturalist.org/)'s open data, and WingDex exists because iNaturalist and its photographers make that data open. The rest doesn't exist without [BioCLIP](https://imageomics.github.io/bioclip-2/) and Imageomics, [NABirds](https://dl.allaboutbirds.org/nabirds) and the Cornell Lab, OpenStreetMap, and AviList and eBird.
 
 <!-- TODO(John): check the BioCLIP and NABirds links. Pin the repo/model-card links to a tag. -->
 

@@ -143,8 +143,6 @@ The app had already been renamed twice. The first Spark prompt called it "Bird-D
 
 It has a table of names already taken (Birdex, FeatherDex, Lifer!, Birda and seven more) and five categories of candidates.[^names] I picked WingDex. I honestly thought it was genius. The rename landed the next morning, and that evening at 8:49 PM I sent ChatGPT this:
 
-<!-- TODO(John): the outline mentions "the pic you're sending (the moment of naming?)". Is it the bottle photo below, or something else? -->
-
 ![ChatGPT, Tue Feb 17 at 8:49 PM: a photo of a bottle of Windex on my counter, and "I've decided to name the app WingDex. Can you help generate a logo for it that evokes the vibe of the cleaning product but still very obviously birding coded?"](windex-bottle.png)
 
 It delivered.

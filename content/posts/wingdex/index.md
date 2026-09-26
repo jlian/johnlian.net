@@ -20,7 +20,7 @@ draft: true
 
 <!-- TODO(John): BEFORE PUBLISHING. config.toml sets goldmark unsafe = true, so every HTML comment in this file ships in the page source. Remove every "TODO(" comment (`grep -n 'TODO(' content/posts/wingdex/index.md` should print nothing), then set draft: false. -->
 
-<!-- TODO(John): [P1] hero photo. The January sunbird (not photo X: vision-only already ranks Fork-tailed #1, so photo X still needs picking; see the outline's criteria). Which species, and where? Confirmed: a Fork-tailed Sunbird, Zhangzhou, Jan 1, 2026, 09:59 (screenshot placed in section 12). "Taiwan, China and Japan" and "By January 19" still read fine, since Jan 1 was mid-trip. It now also carries the section 2 thread: it was the first bird to fall through the BirdLife/eBird taxonomy gap (your memory; the repo doesn't say whose photo it was). -->
+<!-- TODO(John): [P1] hero photo. The January sunbird (not photo X: vision-only already ranks Fork-tailed #1; photo X is the Xiamen Little Egret, Jan 2, in sections 7, 8 and 12). Which species, and where? Confirmed: a Fork-tailed Sunbird, Zhangzhou, Jan 1, 2026, 09:59 (screenshot placed in section 12). "Taiwan, China and Japan" and "By January 19" still read fine, since Jan 1 was mid-trip. It now also carries the section 2 thread: it was the first bird to fall through the BirdLife/eBird taxonomy gap (your memory; the repo doesn't say whose photo it was). -->
 
 On January 19, right after a trip through Taiwan, China and Japan, I had about 100 culled bird photos from my a6700 (shot with [the bird button](/posts/tracking-expand-spot-bird-button/)), and I didn't know what most of them were, so I sat down with [Merlin](https://merlin.allaboutbirds.org/) to go through them.
 
@@ -193,9 +193,16 @@ Then came the waiting. A recipe pilot on 500 species took 3 to 4 hours, and a fu
 <!-- TODO(John): number of recipe pilots, number of full runs, total GPU-hours (also for chart [C6] "Training compute"), and the calendar span (first distill commit Jul 21; web ship Aug 5-7; crop fix and probe Aug 25). -->
 <!-- TODO(John): the RTX 3080, "a good soldier": anything it survived? The two-jobs-at-once lockup is already a README rule. -->
 
-The first student, WingCLIP-0.1, did what distillation does and landed just under its teacher. Then I fine-tuned it on real species labels, and it passed BioCLIP-2 on the NABirds test split I'd been checking against all along.[^wiseft] On my golden set, though, it got the first guess right less often than BioCLIP-2 had. On the photo I'd been using as a check, the right bird came back third.
+The first student, WingCLIP-0.1, did what distillation does and landed just under its teacher. Then I fine-tuned it on real species labels, and it passed BioCLIP-2 on the NABirds test split I'd been checking against all along.[^wiseft] On my golden set, though, it got the first guess right less often than BioCLIP-2 had. The same thing is easy to see in the app today by switching location off.
 
-<!-- TODO(John): [R1] photo X card, vision-only top 5 with similarity bars, true bird at #3. -->
+On January 2 I photographed a Little Egret at 五缘湾 (Wuyuan Bay) in Xiamen. The egret is Xiamen's city bird: it's on the local TV station's logo, the central park is named after it, and the city's nickname is 鹭岛, "Egret Island". Without being told where it was, WingDex looked at my hometown's city bird and said Chinese Egret, at 56%. Little Egret came fourth, at 3%.
+
+<!-- TODO(John): exact names of the central park and the TV station, for this line. -->
+<!-- TODO(John): get a second opinion on the egret ID (iNat) before publishing. -->
+<!-- TODO(John): replace with designed R-card [R1]: vision-only top 5 with similarity bars. -->
+<!-- TODO(John): consider crop/size/pairing (the two egret screenshots could be a side-by-side pair here and in section 12). -->
+
+![My Little Egret photo from Xiamen with location off. WingDex says Chinese Egret 56%, Western Reef-Heron 34%, Reddish Egret 4%, Little Egret 3% and Slaty Egret 1%, with a red "?" on the confirm button](egret-location-off.png)
 
 [^funnel]: The numbers get questioned every time, so: 11,167 species in the taxonomy, 7,555 with at least 50 open-licensed research-grade photos on iNaturalist to learn from, and 3,850 with enough held-out photos to fine-tune on. Classification is zero-shot against the text of all 11,167 names, so a species needs a name, not training photos, to be predictable. The weak tail is real, though, and it's tracked in #370.
 
@@ -211,15 +218,15 @@ The first student, WingCLIP-0.1, did what distillation does and landed just unde
 
 The golden-set miss looked like a recognition failure, and it wasn't. The student's top five matched the teacher's 96%: the right bird was almost always on the list, just not first.
 
-<!-- TODO(John): [R2] same photo X card, the true bird highlighted at #3. [C1] launch-style bar chart, top-1 vs top-5, NABirds, with the setup in the subtitle. -->
+<!-- TODO(John): [R2] the egret card again, Little Egret highlighted at #4 (until the designed R-card exists, the location-off screenshot above stands in). [C1] launch-style bar chart, top-1 vs top-5, NABirds, with the setup in the subtitle. -->
 
 **The model usually recognized the bird. The product still had to rank it.**
 
 ### Why the range map couldn't fix it
 
-The old reranker was a stack of hand-tuned rules: a confidence floor, the tier table from March, and a "dominance gate" that ignored geography whenever the photo looked certain. It mostly worked when the gate switched the tiers off. The deeper problem was that a range map says whether a bird is *possible* somewhere, and ranking needs to know whether it's *common* there. A Mallard and a vagrant rarity can both be "present".
+The old reranker was a stack of hand-tuned rules: a confidence floor, the tier table from March, and a "dominance gate" that ignored geography whenever the photo looked certain. It mostly worked when the gate switched the tiers off. The deeper problem was that a range map says whether a bird is *possible* somewhere, and ranking needs to know whether it's *common* there. The egret is a good example. Chinese Egret really does breed on islands off Fujian, but in summer, and it mostly winters farther south, so in January it's possible there without being common. Western Reef-Heron and Reddish Egret are on the wrong continents.
 
-<!-- TODO(John): [R3] photo X with the old x0.5 rule applied, San Diego heron as an inset. If you have a number for how little the hand tiers beat vision alone, put it in a footnote; I couldn't find one in ml/README. -->
+<!-- TODO(John): [R3] designed R-card: the egret with the old x0.5 rule applied (no real screenshot exists, since the BirdLife path is deleted), San Diego heron as an inset. If you have a number for how little the hand tiers beat vision alone, put it in a footnote; I couldn't find one in ml/README. -->
 
 ### One fitted score
 
@@ -231,11 +238,11 @@ score = sim/T + beta * log P(species | cell, month)
 
 `sim` is how closely the photo matches each species name, and `P` comes from iNaturalist sightings counted on the same 27 km grid. `T` and `beta` are two knobs, how much to trust the photo and how much to trust the map, fitted on labeled photos instead of set by hand.[^bayes] Strong visual evidence now beats a bad prior on its own, which is what the dominance gate had been faking.
 
-<!-- TODO(John): [R4] photo X with the fitted prior: a sim/T bar plus a beta*logP bar per candidate. -->
+<!-- TODO(John): [R4] designed R-card: the egret with the fitted prior, a sim/T bar plus a beta*logP bar per candidate. -->
 
 ### What the world range map was worth
 
-iNaturalist sightings did the heavy lifting, and adding the month helped a little. Adding BirdLife on top was worth 0.30 points, and on August 5 the 681K-blob range system went out with GPT. I'm grading my own homework here, since every test photo came from iNaturalist and so did the prior, so I built an independent one from GBIF with iNaturalist excluded, which is mostly eBird. Its fitted weight came out to exactly 0.0.[^ablation]
+iNaturalist sightings did the heavy lifting, and adding the month helped a little. Adding BirdLife on top was worth 0.30 points, and on August 5 the 681K-blob range system went out with GPT. Every test photo came from iNaturalist and so did the prior, so I built an independent one from GBIF with iNaturalist excluded, which is mostly eBird. Its fitted weight came out to exactly 0.0.[^ablation]
 
 <!-- TODO(John): [D13] ablation bars (iNat, +month, +BirdLife, GBIF). -->
 
@@ -351,11 +358,14 @@ The trademark closed the loop. The Notice of Allowance arrived September 15, iOS
 
 <!-- TODO(John): [P13] App Store page and the Statement of Use line, redacted. Confirm these three dates against TSDR (serial 99664749) and App Store Connect. -->
 
-Here's the check photo from the training section now:
+Here's the egret from Xiamen again, with location on:
 
-<!-- TODO(John): [R5] photo X, final order, true bird at #1. -->
+<!-- TODO(John): replace with designed R-card [R5]: final order, Little Egret at #1. -->
+<!-- TODO(John): consider crop/size/pairing -->
 
-On held-out photos with their location and date, the shipped pipeline gets 94.27% of first guesses right. That's iNaturalist photos scored against an iNaturalist prior, so again, my own homework.[^e2e]
+![The same egret photo with location on, at 五缘湾, Jan 2, 2026. WingDex says Little Egret 97%, Chinese Egret 2%, Western Reef-Heron 1%](egret-location-on.png)
+
+Little Egret, at 97%,[^calibration] and two other birds from the same outing went the same way.[^same-trick] A jump from 3% to 97% invites the objection that the prior just picks the common egret. Chinese Egret is still at 2%, not zero, and I'm grading my own homework here: on held-out photos with their location and date, the shipped pipeline gets 94.27% of first guesses right, but those are iNaturalist photos scored against an iNaturalist prior.[^e2e]
 
 The sunbird from the top of this post, the one that fell through the taxonomy gap in March, gets this today:
 
@@ -372,6 +382,10 @@ And the folder that started this, on an iPhone in airplane mode, in one pass:
 [^rows]: Removing a species isn't deleting a row. The classifier matches embeddings by position, so "cosine row `i` must BE species `i`": delete row 117 and every later bird shifts by one, and the model gives correct answers under the wrong names. Every artifact that indexes species had to be rebuilt together. The agent also argued against dropping them at all, because "there is a live bird in that Taipei Zoo photo. Whatever it is, the user saw something." Fair, but they're gone. As for the two lists, AviList and eBird disagree on 33 birds, and neither is wrong. IUCN's "extinct" is a formal assessment that needs exhaustive surveys, while eBird's EXTINCT column is editorial, closer to "you will not see this". Switching added 27 species, restored the five that live in captivity, and moved the South Island Kokako out. The Ivory-billed Woodpecker stays. Getting the AviList list right took two fixes of its own: subspecies rows carry their parent's IUCN status, so each extinct parent was being counted once per subspecies, and a missing column silently degraded to processing every row, which the fix commit calls out because "a plausible-looking wrong list is the worst failure mode here." A day later, eBird's EXTINCT column replaced AviList for this anyway.
 
 [^d1]: After months of designing around Cloudflare's free tier, the thing that finally broke it was me. On September 1, a migration to key every observation by eBird species code, plus a 51-commit PR's worth of CI runs against the preview database, used up D1's free daily read quota and blocked the deploy. I went to Workers Paid for a month to get the release through, and I have a reminder to go back to Free.
+
+[^calibration]: 97%, and 100% on the prinia in the next footnote, is more confident than any birder would be about a bird flying over open water. It's the right answer with confidence it hasn't earned, the same problem as the 99.9999% vulture, only smaller.
+
+[^same-trick]: A Yellow-bellied Prinia, with location off, was an African Tawny-flanked Prinia at 68%, with the right answer second at 19%; with location on, it was a Yellow-bellied Prinia at 100%. A Little Grebe, with location off, was an Australasian Grebe at 86%, with the right answer third at 3%; with location on, 99%. In both cases the lookalike doesn't live on this continent.<br><img src="/posts/wingdex/prinia-location-off.png" alt="Prinia, location off: Tawny-flanked Prinia 68%, Yellow-bellied Prinia 19%" width="120"> <img src="/posts/wingdex/prinia-location-on.png" alt="Prinia, location on: Yellow-bellied Prinia 100%" width="120"> <img src="/posts/wingdex/grebe-location-off.png" alt="Grebe, location off: Australasian Grebe 86%, Little Grebe 3%" width="120"> <img src="/posts/wingdex/grebe-location-on.png" alt="Grebe, location on: Little Grebe 99%" width="120"> <!-- TODO(John): image size/pairing for these four. -->
 
 [^e2e]: The iNaturalist calibration split, 3,322 photos from the same ecosystem as the prior, so it isn't independent. The number was 93.78% before the crop fix.
 

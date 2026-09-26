@@ -7,7 +7,9 @@
 
   var css =
     '.wd-chart{position:relative}' +
-    '.wd-ctl{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin:0 0 .75rem;font-size:.875rem}' +
+    '.wd-ctl{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem 1rem;margin:0 0 .75rem;font-size:.875rem}' +
+    '.wd-ctl-top{position:absolute;margin:0;z-index:1}' +
+    '@media (max-width:30em){.wd-ctl{font-size:.75rem}.wd-ctl button{padding:.2rem .6rem}}' +
     '.wd-ctl [role=group]{display:inline-flex;border:1px solid #d7d5d0;border-radius:999px;padding:2px}' +
     '.wd-ctl button{font:inherit;border:0;background:none;color:#555;padding:.25rem .8rem;border-radius:999px;cursor:pointer}' +
     '.wd-ctl button[aria-pressed=true]{background:#1f6f5c;color:#fff}' +
@@ -126,6 +128,29 @@
       });
       fig.insertBefore(ctl, fig.firstChild);
       apply(false);
+      // Sit on the title row, right-aligned, when there's room; otherwise stay above the chart.
+      var head = svg.querySelector('.t-title');
+      var place = function () {
+        ctl.classList.remove('wd-ctl-top');
+        ctl.style.top = ctl.style.right = '';
+        if (!head) return;
+        var f = fig.getBoundingClientRect(), s = svg.getBoundingClientRect(), h = head.getBoundingClientRect();
+        var vb = svg.viewBox && svg.viewBox.baseVal;
+        var pad = vb && vb.width ? s.width / vb.width * 80 : 0;
+        ctl.classList.add('wd-ctl-top');
+        var w = ctl.offsetWidth, ch = ctl.offsetHeight;
+        if (h.right + 16 + w > s.right - pad) {
+          ctl.classList.remove('wd-ctl-top');
+          return;
+        }
+        s = svg.getBoundingClientRect(); h = head.getBoundingClientRect(); f = fig.getBoundingClientRect();
+        ctl.style.top = (h.top - f.top + h.height / 2 - ch / 2) + 'px';
+        ctl.style.right = (f.right - s.right + pad) + 'px';
+      };
+      place();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+      if ('ResizeObserver' in window) new ResizeObserver(place).observe(fig);
+      else window.addEventListener('resize', place);
     }
 
     if (!still) fig.classList.add('wd-anim');

@@ -20,7 +20,7 @@ draft: true
 
 <!-- TODO(John): BEFORE PUBLISHING. config.toml sets goldmark unsafe = true, so every HTML comment in this file ships in the page source. Remove every "TODO(" comment (`grep -n 'TODO(' content/posts/wingdex/index.md` should print nothing), then set draft: false. -->
 
-<!-- TODO(John): [P1] hero photo. Leading candidate: the January sunbird (also photo X if it qualifies; see the outline's photo X criteria). Which species, and where? It now also carries the section 2 thread: it was the first bird to fall through the BirdLife/eBird taxonomy gap (your memory; the repo doesn't say whose photo it was). -->
+<!-- TODO(John): [P1] hero photo. Leading candidate: the January sunbird (also photo X if it qualifies; see the outline's photo X criteria). Which species, and where? Confirmed: a Fork-tailed Sunbird, Zhangzhou, Jan 1, 2026, 09:59 (screenshot placed in section 12). "Taiwan, China and Japan" and "By January 19" still read fine, since Jan 1 was mid-trip. It now also carries the section 2 thread: it was the first bird to fall through the BirdLife/eBird taxonomy gap (your memory; the repo doesn't say whose photo it was). -->
 
 On January 19, right after a trip through Taiwan, China and Japan, I had about 100 culled bird photos from my a6700 (shot with [the bird button](/posts/tracking-expand-spot-bird-button/)), and I didn't know what most of them were, so I sat down with [Merlin](https://merlin.allaboutbirds.org/) to go through them.
 
@@ -105,7 +105,7 @@ Every candidate GPT suggested then got a multiplier for where the photo was take
 
 <!-- TODO(John): the outline puts the "dominance gate" (ignore geography when the photo looks certain) here, but I can't find it in the March code. The term shows up in ml/README (E2) for the on-device era, so I've left it for 8.2. Confirm. -->
 
-[^taxonomies]: The 10,144 are the species that matched. The night the range maps shipped, about 1,183 of BirdLife's maps matched nothing in my eBird-based species list, and my own sunbird photo was one of the casualties. My reaction was roughly "omg, this can't be real, my own bird pic": I thought scientific names were in Latin precisely so that they'd be standardized, so how can there be *competing* bird taxonomies? I thought I was taking crazy pills. The rules for *naming* a species are standardized; deciding *which populations count as separate species* is a judgment call, and each checklist (eBird/Clements, BirdLife/HBW, IOC, Howard & Moore) splits and lumps differently. The Latin is standardized, but what it refers to isn't. [AviList](https://www.avilist.org/), published in 2025, is the first attempt at one unified global list, so I built a crosswalk through it that matched BirdLife's splits back to eBird's lumps by their original names. That recovered 223 species and cut the unmatched maps to about 630; for example, BirdLife's *Aethopyga latouchii* is eBird's Fork-tailed Sunbird. The range maps were deleted along with GPT in August, and the crosswalk script survives only because its second half fills in the IDs behind the BirdLife factsheet links in the app. <!-- TODO(John): confirm it's a Fork-tailed Sunbird and where it was taken (Fork-tailed isn't a Taiwan bird; mainland China?) -->
+[^taxonomies]: The 10,144 are the species that matched. The night the range maps shipped, about 1,183 of BirdLife's maps matched nothing in my eBird-based species list, and my own sunbird photo, taken in Zhangzhou on New Year's morning, was one of the casualties. My reaction was roughly "omg, this can't be real, my own bird pic": I thought scientific names were in Latin precisely so that they'd be standardized, so how can there be *competing* bird taxonomies? I thought I was taking crazy pills. The rules for *naming* a species are standardized; deciding *which populations count as separate species* is a judgment call, and each checklist (eBird/Clements, BirdLife/HBW, IOC, Howard & Moore) splits and lumps differently. The Latin is standardized, but what it refers to isn't. [AviList](https://www.avilist.org/), published in 2025, is the first attempt at one unified global list, so I built a crosswalk through it that matched BirdLife's splits back to eBird's lumps by their original names. That recovered 223 species and cut the unmatched maps to about 630; for example, BirdLife's *Aethopyga latouchii* is eBird's Fork-tailed Sunbird. The range maps were deleted along with GPT in August, and the crosswalk script survives only because its second half fills in the IDs behind the BirdLife factsheet links in the app.
 
 [^tailwind]: For a while, local dev kept 360k+ of those blobs as loose files inside the project folder. Tailwind v4 scans the project for class names, so it read every one of them, and loading `/` locally took 28 seconds.
 
@@ -356,6 +356,13 @@ Here's the check photo from the training section now:
 <!-- TODO(John): [R5] photo X, final order, true bird at #1. -->
 
 On held-out photos with their location and date, the shipped pipeline gets 94.27% of first guesses right. That's iNaturalist photos scored against an iNaturalist prior, so again, my own homework.[^e2e]
+
+The sunbird from the top of this post, the one that fell through the taxonomy gap in March, gets this today:
+
+<!-- TODO(John): photo X check. Run with the prior off; if vision-only ranks Crimson Sunbird first, this is R1→R5. Otherwise it stays the hero, not photo X. -->
+<!-- TODO(John): consider crop/size/pairing -->
+
+![My sunbird photo from Zhangzhou, Jan 1, 2026, 09:59. WingDex says Fork-tailed Sunbird 83%, then Crimson Sunbird 6%, Black-throated 5%, Temminck's 2% and Crimson-backed 1%, the last four with the rarity badge](sunbird-zhangzhou.png)
 
 And the folder that started this, on an iPhone in airplane mode, in one pass:
 

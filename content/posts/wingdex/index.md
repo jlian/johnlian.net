@@ -99,13 +99,15 @@ And later that month, #238:
 
 ![A banana shaped like a duck's head. WingDex says "No bird species identified"](high-as-duck.png)
 
-The next reasonable step was a range map of every bird on Earth. On March 20 I rasterized [BirdLife International's](https://datazone.birdlife.org/) range maps onto a 27 km grid, which came to 10,144 species across 681,023 cells, stored as 681K little blobs in R2.[^tailwind] As I remember it, the first bird to fall through the gap between two taxonomies was the sunbird from the top of this post.[^taxonomies]
+The next reasonable step was a range map of every bird on Earth. On March 20 I rasterized [BirdLife International's](https://datazone.birdlife.org/) range maps onto a 27 km grid,[^ebird-no] which came to 10,144 species across 681,023 cells, stored as 681K little blobs in R2.[^tailwind] As I remember it, the first bird to fall through the gap between two taxonomies was the sunbird from the top of this post.[^taxonomies]
 
 <!-- TODO(John): this sentence assumes the hero photo [P1] is the January sunbird. If it isn't, say "a sunbird I'd photographed in January" instead. -->
 
 Every candidate GPT suggested then got a multiplier for where the photo was taken: 1.0 if the bird lives there, 0.85 if it's near its range and 0.5 if it's out of range. That fixed some wrong IDs. It could also punish a right one, which I'd find out in April.
 
 <!-- TODO(John): the outline puts the "dominance gate" (ignore geography when the photo looks certain) here, but I can't find it in the March code. The term shows up in ml/README (E2) for the on-device era, so I've left it for 8.2. Confirm. -->
+
+[^ebird-no]: Why BirdLife and not eBird: on March 16 at 6:36 PM I emailed the Cornell Lab to ask for written consent, under Section 3d of the eBird Status & Trends terms of use, to use its weekly relative-abundance estimates as a server-side prior that users would never see, with citation and the required disclaimer. At 6:59 PM I started building it, and the branch had 18 commits by 10:33 PM. On March 19, still waiting, I started over on BirdLife, and on March 24 Cornell replied that the use case "falls out of the intended use of eBird data", and the branch was never merged.
 
 [^taxonomies]: The 10,144 are the species that matched. The night the range maps shipped, about 1,183 of BirdLife's maps matched nothing in my eBird-based species list, and my own sunbird photo, taken in Zhangzhou on New Year's morning, was one of the casualties. My reaction was roughly "omg, this can't be real, my own bird pic": I thought scientific names were in Latin precisely so that they'd be standardized, so how can there be *competing* bird taxonomies? I thought I was taking crazy pills. The rules for *naming* a species are standardized; deciding *which populations count as separate species* is a judgment call, and each checklist (eBird/Clements, BirdLife/HBW, IOC, Howard & Moore) splits and lumps differently. The Latin is standardized, but what it refers to isn't. [AviList](https://www.avilist.org/), published in 2025, is the first attempt at one unified global list, so I built a crosswalk through it that matched BirdLife's splits back to eBird's lumps by their original names. That recovered 223 species and cut the unmatched maps to about 630; for example, BirdLife's *Aethopyga latouchii* is eBird's Fork-tailed Sunbird. The range maps were deleted along with GPT in August, and the crosswalk script survives only because its second half fills in the IDs behind the BirdLife factsheet links in the app.
 
@@ -246,7 +248,7 @@ score = sim/T + beta * log P(species | cell, month)
 
 ### What the world range map was worth
 
-iNaturalist sightings did the heavy lifting, and adding the month helped a little. Adding BirdLife on top was worth 0.30 points, and on August 5 the 681K-blob range system went out with GPT. Every test photo came from iNaturalist and so did the prior, so I built an independent one from GBIF with iNaturalist excluded, which is mostly eBird. Its fitted weight came out to exactly 0.0.[^ablation]
+iNaturalist sightings did the heavy lifting, and adding the month helped a little. Adding BirdLife on top was worth 0.30 points, and on August 5 the 681K-blob range system went out with GPT. Every test photo came from iNaturalist and so did the prior, so for evaluation only I built an independent one from GBIF with iNaturalist excluded, which is mostly GBIF's public, CC BY 4.0 [eBird Observation Dataset](https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e). Its fitted weight came out to exactly 0.0.[^ablation]
 
 <!-- TODO(John): [D13] ablation bars (iNat, +month, +BirdLife, GBIF). -->
 
@@ -262,7 +264,7 @@ A prior can only separate birds that live in different places. Lookalikes that s
 
 [^bayes]: Textbook Bayes would divide out the training set's species mix before multiplying by the local prior, because the model's output already reflects how often each species appeared in training. It barely matters here, because the corpus has a floor of 50 and a cap of 500 photos per species, so the training mix is fairly flat. What's left is up to a 10x spread between floor and cap, plus whatever skew BioCLIP-2 (trained on the uncapped TreeOfLife-200M) passed down. Fitting `T` and `beta` by log loss is calibration, not inference.
 
-[^ablation]: On the iNaturalist calibration split: the iNaturalist prior is worth +15.05 points of top-1 over vision alone, the month +1.2, and BirdLife +0.30 on top. A two-year-stale prior costs 2.88 points, so it gets refreshed quarterly. The GBIF prior used the same 27 km grid, and naively adding its counts to iNaturalist's cost 1.44 points. My guess is that eBird checklists record what birders go looking for, not what people photograph, and the test photos are iNaturalist photos, so the iNaturalist prior has a home-field advantage.
+[^ablation]: On the iNaturalist calibration split: the iNaturalist prior is worth +15.05 points of top-1 over vision alone, the month +1.2, and BirdLife +0.30 on top. A two-year-stale prior costs 2.88 points, so it gets refreshed quarterly. The GBIF prior used the same 27 km grid, and naively adding its counts to iNaturalist's cost 1.44 points. My guess is that eBird checklists record what birders go looking for, not what people photograph, and the test photos are iNaturalist photos, so the iNaturalist prior has a home-field advantage. With a fitted weight of 0.0, the GBIF prior never shipped.
 
 [^nan]: Another regression test exists because of a month that wasn't a number. `NaN < 1` and `NaN > 12` are both false, so a missing month passed the range check, and then `| 0` turned it into January.
 
@@ -334,7 +336,7 @@ The hard part was deciding what counts. I had to choose which kinds of OpenStree
 
 <!-- TODO(John): how many sample coordinates you eyeballed per round, and the ranking rules you ended up with (parks > protected areas > water > ...?). Link post 2 once it exists. -->
 
-[^hotspots]: <!-- TODO(John): why eBird hotspots didn't work. Points not polygons (same nearest-point problem as Wikidata)? eBird API terms? Coverage? -->
+[^hotspots]: eBird hotspots are exactly "what birders call this spot", but they're eBird data, and I'd already asked about using eBird data once, in March. <!-- TODO(John): also true that hotspots are points, not areas, so they'd hit the same nearest-point problem as Wikidata? Add only if you confirm. -->
 
 [^twice]: Along the way, every closed park and lake was being tiled twice, once as an area and once as a line, which nobody noticed at first because comparing feature ids showed zero duplicates. The area id is the way id times two. <!-- TODO(John): add the WSL disk story here or as its own footnote once you've confirmed the numbers: a misconfigured planet build filled the SSD and locked up the instance; notes say 12 MB free, Optimize-VHD reclaimed 0 bytes (ext4 never sent TRIM), cloning to a new disk got 355 GB back. None of that is in the repo. -->
 

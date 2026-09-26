@@ -28,7 +28,7 @@ Identifying one photo, an Osprey from Oaks Bottom, took 16 taps. You pick the ph
 
 <!-- TODO(John): [P2] Merlin screenshot strip of the Oaks Bottom Osprey loop. -->
 
-<!-- TODO(John): [D1] diagram: the 16-step loop x100 (1,600 taps) next to "select all -> review -> save". -->
+![Diagram: Merlin, one photo at a time, 16 taps per photo from Photo and Choose photo through crop, location, Identify, Save and ID another bird, against WingDex, a whole folder at a time](d1.svg)
 
 For scale, my whole life list is 170 species from a bit over 400 photos, and the biggest batch I've ever imported at once was about 50 (the tests run hundreds). This was never a big-data problem, just a lot of tapping.
 
@@ -79,7 +79,7 @@ Within a day it did the thing I wanted. I selected a pile of photos, it rebuilt 
 
 The first real version sent every photo to GPT (gpt-4.1-mini at first, later gpt-5.4-mini), with a quick pass and a second, stronger pass whenever the first one wasn't sure. The prompt included where and when the photo was taken. Each photo took a couple of seconds and occasionally 13, so I sized the progress bar for 10. GPT also handled several things I didn't think about at the time because they came free: it drew a crop box around the bird, said plainly when there was no bird, gave separate answers when there were several, and added a note about the plumage.
 
-<!-- TODO(John): [D2] architecture frame 1: photo -> server -> GPT, with the range blobs in R2. -->
+![Architecture, February to August 5: the photo goes from the phone or browser to the WingDex server on Cloudflare Workers, which sends it to GPT; range data comes from 681K BirdLife blobs in R2](d2-frame1.svg)
 
 My wife had become the QA department by then. Her first dozen issues, filed over two evenings in February, were about passkeys, time zone ordering and avatar centering, and in March she moved on to the identifications. On March 4 she filed #216:
 
@@ -165,7 +165,9 @@ On April 5 WingDex flagged a Yellow-crowned Night Heron in San Diego, where they
 
 That was demoralizing after how much work the range map had been. Then Diablo 4 season 13 came out, and after that the project sat. There isn't a single commit between April 21 and July 20.
 
-<!-- TODO(John): [D5] commit timeline, captioned only "Commits per month." Mark the trademark dates. Pacific-time author dates on main: Feb 574, Mar 312, Apr 13, May 0, Jun 0, Jul 44, Aug 386, Sep 101 (1,430 total, recount on publish day). -->
+![Bar chart, commits per month on main, Feb to Sep 2026: Feb 574, Mar 312, Apr 13, May 0, Jun 0, Jul 44, Aug 386, Sep 106](d5.svg) "Commits per month."
+
+<!-- TODO(John): D5 recount (Pacific author dates, all commits on origin/main through Sep 25): Feb 574, Mar 312, Apr 13, May 0, Jun 0, Jul 44, Aug 386, Sep 106; 1,435 total. Rerun d5_commits.py on publish day, and confirm the trademark filing date (Feb 22) against TSDR. -->
 
 ## A letter from the USPTO
 
@@ -173,13 +175,13 @@ On July 20, around 3 PM, the USPTO told me the WingDex trademark had been approv
 
 At 5:47 PM I asked, almost verbatim, "Does iOS 27 have on-device models that can be used for WingDex instead of GPT? Can you look it up?" It does, but Apple's on-device model is a generalist, and Apple's own guidance is to hand fine-grained work like species ID to a specialist.[^apple] Merlin's model is a purpose-built specialist, but it's private. The best open one I could find was [BioCLIP-2](https://huggingface.co/imageomics/bioclip-2), an MIT-licensed model trained on 200 million photos of living things, and on my 27-photo golden set it beat GPT, both on the first guess and in the top five.[^golden] So a specialist wasn't just cheaper and offline, it was better. It was also 307 MB.
 
-<!-- TODO(John): [C0] optional "Why not CLIP?" chart: general CLIP models on birds. -->
+![Bar chart, general-purpose vision models on birds, top-1 on NABirds with 11,167 labels: BioCLIP-2 86.31%, CLIP ViT-L/14 32.50%, SigLIP B/16 26.75%, CLIP ViT-B/16 25.59%](c0.svg)
 
 The sensible plan was #259, a hybrid: BioCLIP-2 on the device when it's cached, GPT otherwise. Nine minutes later I opened #260, "R&D: distill and benchmark a sub-25 MiB bird-only BioCLIP-2 student", and that one took over the next month. On August 5 I deleted the GPT path entirely. Identifying a bird stopped costing anything, so accounts became optional, and WingDex went back inside the surprise-bill rule.
 
 The price was everything GPT had given me for free in March: the crop box, "there's no bird here", separate answers for several birds, and the plumage note. The photos themselves never leave the device now; the [privacy policy](https://wingdex.app/privacy) has the rest.
 
-<!-- TODO(John): [D2] architecture frame 2: everything on the device; the server syncs records and names places. -->
+![Architecture from August 5: identification runs on the phone or in the browser with WingCLIP-0.3 and the occurrence prior; the WingDex server only syncs records and names places from coordinates](d2-frame2.svg)
 <!-- TODO(John): check the privacy policy URL. -->
 
 [^apple]: <!-- TODO(John): quote and link Apple's Foundation Models guidance about calling a specialist model through tool calling for things like plant or species ID. ml/README says "Apple sends species ID to a specialist model through tool calling" but doesn't cite the page. --> Apple's Foundation Models documentation.
@@ -190,7 +192,9 @@ The price was everything GPT had given me for free in March: the crop box, "ther
 
 The idea is called distillation. You show a small model (the student) the same photos as a big one (the teacher) and train it to produce the same embedding, the teacher's numeric summary of what's in the picture. Species are never a fixed list of outputs: the app compares a photo's embedding against embeddings of the species names as text, so all 11,167 names stay predictable even for birds the student never saw a photo of.[^funnel]
 
-<!-- TODO(John): [D7] distillation diagram. [D10] model family tree, versioned like a frontier lineup (WingCLIP-0.1-alpha/beta, 0.1, 0.2-alpha retired, 0.3-alpha/beta, 0.3). -->
+![Distillation diagram: a photo goes through the teacher, BioCLIP-2 (304M), and the student, WingCLIP-0.1 (86.6M); the student is trained to match the teacher's 768 numbers, which are then compared against the 11,167 species names](d7.svg)
+
+![The WingCLIP model family: BioCLIP-2 as the first teacher, WingCLIP-0.1-alpha, -beta and 0.1, the retired 0.2-alpha, and WingCLIP-0.3-alpha, -beta and 0.3, with NABirds scores on the training-era split](d10.svg)
 
 The setup was 2.5 million iNaturalist photos of 7,555 species on a NAS, and the RTX 3080 in a closet PC called `tomahawk`.[^tomahawk] I left out the ShareAlike photos, credited all 62,423 photographers, and kept the weights non-commercial, because iNaturalist's photos are, which gives me a weird sense of peace that WingDex can only ever lose money.[^corpus] Photos from the same sighting look nearly identical, so the held-out sets exclude whole observations, not just photos. My first training loop ran at 40 images a second. Switching to the [open_clip](https://github.com/mlfoundations/open_clip) reference structure, and from loose files over SMB to 251 WebDataset shards, got it to about 720, and I learned not to trust the GPU utilization number in `nvidia-smi`.
 
@@ -206,16 +210,15 @@ On January 2 I photographed a Little Egret at 五缘湾 (Wuyuan Bay) in Xiamen. 
 <!-- TODO(John): the park link is TripAdvisor because I couldn't find a neutral page (zh.wikipedia's 白鹭洲公园 is the Nanjing one). -->
 
 [^merlin-egret]: Merlin gets this one right, with or without location. Merlin is good.
-<!-- TODO(John): replace with designed R-card [R1]: vision-only top 5 with similarity bars. -->
-<!-- TODO(John): consider crop/size/pairing (the two egret screenshots could be a side-by-side pair here and in section 12). -->
+<!-- TODO(John): keep the real location-off screenshot (egret-location-off.png, still in the bundle) alongside this card? -->
 
-![My Little Egret photo from Xiamen with location off. WingDex says Chinese Egret 56%, Western Reef-Heron 34%, Reddish Egret 4%, Little Egret 3% and Slaty Egret 1%, with a red "?" on the confirm button](egret-location-off.png)
+![Candidate card, location off, my Little Egret at Wuyuan Bay, Xiamen, Jan 2, 2026: 1. Chinese Egret 56%, 2. Western Reef-Heron 34%, 3. Reddish Egret 4%, 4. Little Egret 3%, 5. Slaty Egret 1%](r1.svg)
 
 [^funnel]: The numbers get questioned every time, so: 11,167 species in the taxonomy, 7,555 with at least 50 open-licensed research-grade photos on iNaturalist to learn from, and 3,850 with enough held-out photos to fine-tune on. Classification is zero-shot against the text of all 11,167 names, so a species needs a name, not training photos, to be predictable. The weak tail is real, though, and it's tracked in #370.
 
 [^tomahawk]: It's a Razer Tomahawk gaming desktop I bought in 2021 or 2022, when a prebuilt was the only way to get an RTX 3080 without scalper markup. <!-- TODO(John): confirm the year. -->
 
-[^corpus]: The weights are CC BY-NC 4.0, with a per-photo `attributions.csv`. Non-commercial carries through from the photos: iNaturalist doesn't allow training commercial models on them. The details are in the [model card](https://github.com/jlian/wingdex/blob/main/ml/README.md), which is long, sorry. <!-- TODO(John): pin this link to a tag. Also fix the `prep_training_set.py` docstring that still says "MIT weight release". --> Splitting by photo put 56.5% of the validation photos in the same observation as a training photo.
+[^corpus]: The weights are CC BY-NC 4.0, with a per-photo `attributions.csv`. Non-commercial carries through from the photos: iNaturalist doesn't allow training commercial models on them. The details are in the [model card](https://github.com/jlian/wingdex/blob/main/ml/README.md), which is long, sorry. <!-- TODO(John): pin this link to a release tag. ios-v1.0.5 is the App Store build but lacks BENCH290.md and the docstring fix, so merge benchmark/nabirds-2026-09 and the docstring fix first, cut the next tag, and pin to that. The prep_training_set.py "MIT weight release" docstring is fixed on branch jlian-blog-charts-and-pre-publish-fixes (9d941098), not merged. --> Splitting by photo put 56.5% of the validation photos in the same observation as a training photo.
 
 [^wiseft]: 81.83% top-1 on NABirds for the pure distill, 89.93% after fine-tuning with a [WiSE-FT](https://arxiv.org/abs/2109.01903) blend, against 86.41% for BioCLIP-2, all on the 24,633-image test split. The blend is the trick: fine-tuning alone makes a model forget what it knew, so you average the fine-tuned weights with the originals and pick the mix that scores best.
 
@@ -227,7 +230,9 @@ The golden-set miss looked like a recognition failure, and it wasn't. The studen
 
 <!-- TODO(John): confirm the student's golden-set top-5 used the same range-gated setup as BioCLIP-2's 96% in [^golden]. If it didn't, reword this. -->
 
-<!-- TODO(John): [R2] the egret card again, Little Egret highlighted at #4 (until the designed R-card exists, the location-off screenshot above stands in). [C1] launch-style bar chart, top-1 vs top-5, NABirds, with the setup in the subtitle. -->
+![The same candidate card with Little Egret highlighted at #4, 3%](r2.svg)
+
+{{< chart "c1" >}}
 
 
 ### Why the range map couldn't fix it
@@ -252,7 +257,7 @@ score = sim/T + beta * log P(species | cell, month)
 
 iNaturalist sightings did the heavy lifting, and adding the month helped a little. Adding BirdLife on top was worth 0.30 points, and on August 5 the 681K-blob range system went out with GPT. Every test photo came from iNaturalist and so did the prior, so as a sanity check that the prior wasn't flattering itself, I also fit one from GBIF with iNaturalist excluded, which is mostly GBIF's public, CC BY 4.0 [eBird Observation Dataset](https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e). It never left testing, and its fitted weight came out to exactly 0.0.[^ablation]
 
-<!-- TODO(John): [D13] ablation bars (iNat, +month, +BirdLife, GBIF). -->
+![Bar chart, what each prior source was worth in top-1 points: iNaturalist sightings +15.05, plus month +1.20, plus BirdLife range maps +0.30, plus GBIF fitted +0.00, plus GBIF counts added naively -1.44](d13.svg)
 
 ### The 99.9999% vulture
 
@@ -278,16 +283,22 @@ WingCLIP-0.1 was too big to ship, so I distilled again, into [TinyCLIP-39M](http
 
 The last run converged shakily. By then my rule was that if it beats BioCLIP-2 on the benchmark, it ships, and it did. The student, WingCLIP-0.3, matched BioCLIP-2 on NABirds at about an eighth of the size.[^benchmark]
 
-<!-- TODO(John): [C3] headline benchmark, launch style: WingCLIP-0.3 vs BioCLIP-2, BioCLIP 2.5, CLIP B/16, CLIP L/14, SigLIP. Subtitle: "NABirds, 48,527 images, 11,167 labels. Birds only." [C5] parameters, launch style: WingCLIP's bar a sliver next to BioCLIP-2 and BioCLIP 2.5. [C4] optional speed vs size bubble. -->
+{{< chart "c3" >}}
+
+{{< chart "c5" >}}
+
+{{< chart "c4" >}}
+
+<!-- TODO(John): C4 is optional; cut it if the section feels chart-heavy. -->
 <!-- TODO(John): the shaky-convergence loss curve, if it's visibly wobbly. -->
 
 Then it had to get smaller. fp16 was free and int8 was fine; int4 lost just enough to miss the bar, and int3 and int2 fell all the way to 0%, not noisy but destroyed. The agent's first int8 number was flattering because it came from simulated quantization in PyTorch, so we measured the actual shipped ONNX file instead, which agreed with the full-precision model a little less often.[^fakequant]
 
-<!-- TODO(John): [D16] quantization cliff. -->
+![Quantization chart, NABirds top-1 by weight precision: WingCLIP-0.1 fp32 89.94, fp16 89.94, int8 89.89, int4 89.06, int3 0, int2 0; WingCLIP-0.3 fp32 86.91, int8 86.82, int4 84.61](d16.svg)
 
 The real Cloudflare constraint turned out to be per file: Workers serves static assets up to 25 MiB each. The int8 model ships as a 13.72 MiB graph plus a 24.00 MiB data file, with 1 MiB to spare, so the "sub-25 MiB" student #260 asked for is 37.72 MiB, in two files that are each under 25. In the browser, WebAssembly beat WebGPU, so the app ships WebAssembly only.[^wasm]
 
-<!-- TODO(John): [D17] the 25 MiB split. -->
+![File sizes against the 25 MiB per-file limit: the visual tower would be 37.72 MiB as one file, so it ships as a 13.72 MiB graph and a 24.00 MiB data file; the occurrence prior is 21.54 MiB and the text classifier 8.09 MiB](d17.svg)
 
 The best bug was in the crop. TinyCLIP was trained on photos resized to 248 pixels and then center-cropped to 224, which is the middle 90% or so of the frame, and WingDex had been resizing straight to 224. Since the first web build, the model had been seeing an 11% wider view than the one it was trained on, and every parity test agreed with the app, because they all used the same wrong transform. The fix was one constant, `CLIP_RESIZE = 248`, and it changed the top answer on 4.8% of photos. (Nine of the iOS parity tests had also never run in CI.)
 
@@ -364,7 +375,7 @@ The duck was the result I didn't expect. On November 8 I photographed what I bel
 
 ![My photo from Union Bay next to a female Ring-necked Duck reference. WingDex says Ring-necked Duck 99%; Wood Duck, Hooded Merganser, Redhead and Canvasback at ~0%](scaup-is-a-ring-necked-duck.png)
 
-<!-- TODO(John): get a birder's second opinion on the duck first. Then fix the Commons description and category and add {{Rename|<new name>.jpg|1|Misidentified: Ring-necked Duck, not Lesser Scaup}}; fix the landing alt text and the fixture (which also says month 10; the photo is Nov 8) in a WingDex session. -->
+<!-- TODO(John): get a birder's second opinion on the duck first. Then fix the Commons description and category and add {{Rename|<new name>.jpg|1|Misidentified: Ring-necked Duck, not Lesser Scaup}}; fix the landing alt text and the fixture in a WingDex session. The scaup also appears in LandingIllustrations.tsx:7, scripts/build-landing-images.mjs:9 and scripts/download-wiki-birds.mjs:18. ml/truth.json:21 also has it as Lesser Scaup, and that's golden-set truth, so if the birder confirms Ring-necked, the golden-set numbers in [^golden] may shift by one photo (1/27 ≈ 3.7 points). Rerun before publishing. -->
 
 The trademark closed the loop. The Notice of Allowance arrived September 15, iOS 1.0.0 went live on the App Store on September 18 (the real one this time), and on September 20 I filed the Statement of Use with the live App Store page as the specimen. The promise to the US government is kept.
 
@@ -372,10 +383,9 @@ The trademark closed the loop. The Notice of Allowance arrived September 15, iOS
 
 Here's the egret from Xiamen again, with location on:
 
-<!-- TODO(John): replace with designed R-card [R5]: final order, Little Egret at #1. -->
-<!-- TODO(John): consider crop/size/pairing -->
+<!-- TODO(John): keep the real location-on screenshot (egret-location-on.png, still in the bundle) alongside this card? -->
 
-![The same egret photo with location on, at 五缘湾, Jan 2, 2026. WingDex says Little Egret 97%, Chinese Egret 2%, Western Reef-Heron 1%](egret-location-on.png)
+![Candidate card, location on, the same egret: 1. Little Egret 97%, 2. Chinese Egret 2%, 3. Western Reef-Heron 1%, 4. Reddish Egret ~0%, 5. Pacific Reef-Heron ~0%](r5.svg)
 
 Little Egret, at 97%,[^calibration] and two other birds from the same outing went the same way.[^same-trick] A jump from 3% to 97% invites the objection that the prior just picks the common egret. Chinese Egret is still at 2%, not zero, and I'm grading my own homework here: on held-out photos with their location and date, the shipped pipeline gets 94.27% of first guesses right, but those are iNaturalist photos scored against an iNaturalist prior.[^e2e]
 
@@ -407,7 +417,7 @@ And the folder that started this, on an iPhone in airplane mode, in one pass:
 
 Everything is out there: [the app](https://wingdex.app), [the repo](https://github.com/jlian/wingdex), the [model card](https://github.com/jlian/wingdex/blob/main/ml/README.md) (which is long, sorry), and the weights under CC BY-NC. The model, the prior and every test photo came from [iNaturalist](https://www.inaturalist.org/)'s open data, and WingDex exists because iNaturalist and its photographers make that data open. Every bird photo in the app that isn't yours comes from Wikipedia and Wikimedia Commons through their open API, credited to its photographer, and Wikidata and Wikipedia help decide what a place is called. The rest doesn't exist without [BioCLIP](https://imageomics.github.io/bioclip-2/) and Imageomics, [NABirds](https://dl.allaboutbirds.org/nabirds) and the Cornell Lab, OpenStreetMap, and AviList and eBird.
 
-<!-- TODO(John): check the BioCLIP and NABirds links. Pin the repo/model-card links to a tag. -->
+<!-- TODO(John): check the BioCLIP and NABirds links. Pin the repo/model-card links to the next release tag (after benchmark/nabirds-2026-09 and the docstring fix merge; ios-v1.0.5 lacks both). The chart JSON source links also point at the unmerged benchmark branch; repoint them then. -->
 
 Agents wrote most of the code and ran most of the experiments. My job was deciding what question to ask, and insisting that every answer come with a measurement, which is how most of their mistakes got caught, sometimes by them.[^gaffes]
 

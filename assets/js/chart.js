@@ -23,6 +23,8 @@
     '.wd-pre [data-value]{transform:scale(0,1)}' +
     '.wd-pre svg[data-orient=v] [data-value]{transform:scale(1,0)}' +
     '.wd-pre circle[data-value]{transform:scale(0)}' +
+    '@media (prefers-color-scheme:dark){.wd-ctl [role=group]{border-color:#444}.wd-ctl button{color:#bbb}' +
+    '.wd-ctl button[aria-pressed=true]{background:#57a08b;color:#111}.wd-tip{background:#f2f2f2;color:#111}}' +
     '@media (prefers-reduced-motion:reduce){.wd-chart *{transition:none!important}}';
   var st = document.createElement('style');
   st.textContent = css;

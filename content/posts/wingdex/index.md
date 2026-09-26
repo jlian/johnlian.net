@@ -81,23 +81,9 @@ The first real version sent every photo to GPT (gpt-4.1-mini at first, later gpt
 
 ![Architecture, February to August 5: the photo goes from the phone or browser to the WingDex server on Cloudflare Workers, which sends it to GPT; range data comes from 681K BirdLife blobs in R2](d2-frame1.svg)
 
-My wife had become the QA department by then. Her first dozen issues, filed over two evenings in February, were about passkeys, time zone ordering and avatar centering, and in March she moved on to the identifications. On March 4 she filed #216:
-
-**Isn't this just a chicken?**[^junglefowl]
-
-<!-- TODO(John): consider crop/size/pairing -->
-
-![A brown hen on grass. WingDex says Common Gallinule, 80%, with Kalij Pheasant at 35%](isnt-this-just-a-chicken.png)
+My wife had become the QA department by then. Her first dozen issues, filed over two evenings in February, were about passkeys, time zone ordering and avatar centering, and in March she moved on to the identifications. On March 4 she filed [Isn't this just a chicken?](https://github.com/jlian/wingdex/issues/216) (WingDex said Common Gallinule, 80%),[^junglefowl] and later that month, [High as duck](https://github.com/jlian/wingdex/issues/238) (no bird species identified).
 
 [^junglefowl]: Technically a chicken is a Red Junglefowl, and that's a species WingDex can answer with. eBird also has "Red Junglefowl (Domestic type)", which WingDex only knows how to display.
-
-And later that month, #238:
-
-**High as duck**
-
-<!-- TODO(John): consider crop/size/pairing. The meme's caption includes the uncensored word. Also: ask your wife before featuring her screenshots. -->
-
-![A banana shaped like a duck's head. WingDex says "No bird species identified"](high-as-duck.png)
 
 The next reasonable step was a range map of every bird on Earth. On March 20 I rasterized [BirdLife International's](https://datazone.birdlife.org/) range maps onto a 27 km grid,[^ebird-no] which came to 10,144 species across 681,023 cells, stored as 681K little blobs in R2.[^tailwind] As I remember it, the first bird to fall through the gap between two taxonomies was the sunbird from the top of this post.[^taxonomies]
 
@@ -125,7 +111,7 @@ Cloudflare was partly a reaction to my [last post that did well on Hacker News](
 
 ## Name it, trademark it, get scammed
 
-The app had already been renamed twice: the first Spark prompt called it "Bird-Dex", and by that evening it was "BirdDex". On February 16 at about 10:30 PM I opened #104, **Maybe need a new name**, which starts:
+The app had already been renamed twice: the first Spark prompt called it "Bird-Dex", and by that evening it was "BirdDex". On February 16 at about 10:30 PM I opened [Maybe need a new name](https://github.com/jlian/wingdex/issues/104), which starts:
 
 > Too many "birddex" and variants out there. Need something more creative.
 
@@ -147,7 +133,7 @@ What stuck was the editorial look and the nod to *Wingspan*,[^wingspan] and toda
 
 [^wingspan]: The board game [*Wingspan*](https://stonemaiergames.com/games/wingspan/). I have bought exactly three board games in my life, *Pandemic Legacy*, *Concordia* and *Wingspan*, and I bought *Wingspan* before I ever took a bird photo.
 
-Five days later, on February 22 at 7:11 PM, my wife filed #167, **WingDex is also a butterfly identifier app 🧐**, and she was right. I had named the app after a cleaning product specifically to be original, and it collided with a butterfly app anyway.
+Five days later, on February 22 at 7:11 PM, my wife filed [WingDex is also a butterfly identifier app 🧐](https://github.com/jlian/wingdex/issues/167), and she was right. I had named the app after a cleaning product specifically to be original, and it collided with a butterfly app anyway.
 
 The same developer had about 30 other *Dex apps, one for seemingly every family of animals, and the butterfly one has since disappeared from the App Store. I didn't want to rename again, and my research said a trademark would settle it, so I applied that night with my real email, phone number and home address, which I now know is what a lawyer's office or a forwarding service is for. The web app was already live, so that class was filed as "in use". The iPhone app didn't exist, so that class was "intent to use",[^itu] which amounts to a legal promise to the US government that I will ship an iPhone app.
 
@@ -159,7 +145,7 @@ The phone call that woke me up the next morning was from someone on a "federally
 
 ## A San Diego heron, in San Diego
 
-On April 5 WingDex flagged a Yellow-crowned Night Heron in San Diego, where they're regulars, as **out of range**. I filed #242 that afternoon ("Yellow crowned night heron should be in range in San Diego"), and the investigation in #243 found that BirdLife's nearest cell for the species was on the coast of Texas, so the 0.5 multiplier had cut a correct answer in half. The fix raised it to 0.65. That was the whole fix, and it wasn't a satisfying one, because nothing in the code was wrong. BirdLife's maps are expert-drawn ranges built for conservation, and at 27 km per cell they were coarse in exactly the place I happened to be, which isn't their fault and wasn't something I could fix.
+On April 5 WingDex flagged a Yellow-crowned Night Heron in San Diego, where they're regulars, as **out of range**. I filed [Yellow crowned night heron should be in range in San Diego](https://github.com/jlian/wingdex/issues/242) that afternoon, and [the investigation](https://github.com/jlian/wingdex/pull/243) found that BirdLife's nearest cell for the species was on the coast of Texas, so the 0.5 multiplier had cut a correct answer in half. The fix raised it to 0.65. That was the whole fix, and it wasn't a satisfying one, because nothing in the code was wrong. BirdLife's maps are expert-drawn ranges built for conservation, and at 27 km per cell they were coarse in exactly the place I happened to be, which isn't their fault and wasn't something I could fix.
 
 <!-- TODO(John): [P7] the heron photo and the "out of range" UI. Was it your photo? The prose above avoids saying so. -->
 
@@ -177,7 +163,7 @@ At 5:47 PM I asked, almost verbatim, "Does iOS 27 have on-device models that can
 
 ![Bar chart, general-purpose vision models on birds, top-1 on NABirds with 11,167 labels: BioCLIP-2 86.31%, CLIP ViT-L/14 32.50%, SigLIP B/16 26.75%, CLIP ViT-B/16 25.59%](c0.svg)
 
-The sensible plan was #259, a hybrid: BioCLIP-2 on the device when it's cached, GPT otherwise. Nine minutes later I opened #260, "R&D: distill and benchmark a sub-25 MiB bird-only BioCLIP-2 student", and that one took over the next month. On August 5 I deleted the GPT path entirely. Identifying a bird stopped costing anything, so accounts became optional, and WingDex went back inside the surprise-bill rule.
+The sensible plan was [a hybrid](https://github.com/jlian/wingdex/pull/259): BioCLIP-2 on the device when it's cached, GPT otherwise. Nine minutes later I opened a second issue, ["R&D: distill and benchmark a sub-25 MiB bird-only BioCLIP-2 student"](https://github.com/jlian/wingdex/issues/260), and that one took over the next month. On August 5 I deleted the GPT path entirely. Identifying a bird stopped costing anything, so accounts became optional, and WingDex went back inside the surprise-bill rule.
 
 The price was everything GPT had given me for free in March: the crop box, "there's no bird here", separate answers for several birds, and the plumage note. The photos themselves never leave the device now; the [privacy policy](https://wingdex.app/privacy) has the rest.
 
@@ -214,7 +200,7 @@ On January 2 I photographed a Little Egret at 五缘湾 (Wuyuan Bay) in Xiamen. 
 
 ![Candidate card, location off, my Little Egret at Wuyuan Bay, Xiamen, Jan 2, 2026: 1. Chinese Egret 56%, 2. Western Reef-Heron 34%, 3. Reddish Egret 4%, 4. Little Egret 3%, 5. Slaty Egret 1%](r1.svg)
 
-[^funnel]: The numbers get questioned every time, so: 11,167 species in the taxonomy, 7,555 with at least 50 open-licensed research-grade photos on iNaturalist to learn from, and 3,850 with enough held-out photos to fine-tune on. Classification is zero-shot against the text of all 11,167 names, so a species needs a name, not training photos, to be predictable. The weak tail is real, though, and it's tracked in #370.
+[^funnel]: The numbers get questioned every time, so: 11,167 species in the taxonomy, 7,555 with at least 50 open-licensed research-grade photos on iNaturalist to learn from, and 3,850 with enough held-out photos to fine-tune on. Classification is zero-shot against the text of all 11,167 names, so a species needs a name, not training photos, to be predictable. The weak tail is real, though, and it's [tracked in its own issue](https://github.com/jlian/wingdex/issues/370).
 
 [^tomahawk]: It's a Razer Tomahawk gaming desktop I bought in 2021 or 2022, when a prebuilt was the only way to get an RTX 3080 without scalper markup. <!-- TODO(John): confirm the year. -->
 
@@ -267,7 +253,7 @@ One version of the fit treated a species' absence from a cell as a soft hint ins
 
 ### Where it stops helping
 
-A prior can only separate birds that live in different places. Lookalikes that share a range, and places where hardly anyone has logged anything, are left to the photo. In #355 the right bird for a spot in Guatemala came in around 12%, behind a Blacksmith Thrush from about 6,000 km away, because the cell had nine observations for August. I tried eight variants of the backoff, and nothing beat the shipped constant, so I stopped tuning.
+A prior can only separate birds that live in different places. Lookalikes that share a range, and places where hardly anyone has logged anything, are left to the photo. In [Bad ID](https://github.com/jlian/wingdex/issues/355), the right bird for a spot in Guatemala came in around 12%, behind a Blacksmith Thrush from about 6,000 km away, because the cell had nine observations for August. I tried eight variants of the backoff, and nothing beat the shipped constant, so I stopped tuning.
 
 [^bayes]: Textbook Bayes would divide out the training set's species mix before multiplying by the local prior, because the model's output already reflects how often each species appeared in training. It barely matters here, because the corpus has a floor of 50 and a cap of 500 photos per species, so the training mix is fairly flat. What's left is up to a 10x spread between floor and cap, plus whatever skew BioCLIP-2 (trained on the uncapped TreeOfLife-200M) passed down. Fitting `T` and `beta` by log loss is calibration, not inference.
 
@@ -296,7 +282,7 @@ Then it had to get smaller. fp16 was free and int8 was fine; int4 lost just enou
 
 ![Quantization chart, NABirds top-1 by weight precision: WingCLIP-0.1 fp32 89.94, fp16 89.94, int8 89.89, int4 89.06, int3 0, int2 0; WingCLIP-0.3 fp32 86.91, int8 86.82, int4 84.61](d16.svg)
 
-The real Cloudflare constraint turned out to be per file: Workers serves static assets up to 25 MiB each. The int8 model ships as a 13.72 MiB graph plus a 24.00 MiB data file, with 1 MiB to spare, so the "sub-25 MiB" student #260 asked for is 37.72 MiB, in two files that are each under 25. In the browser, WebAssembly beat WebGPU, so the app ships WebAssembly only.[^wasm]
+The real Cloudflare constraint turned out to be per file: Workers serves static assets up to 25 MiB each. The int8 model ships as a 13.72 MiB graph plus a 24.00 MiB data file, with 1 MiB to spare, so the "sub-25 MiB" student [the R&D issue](https://github.com/jlian/wingdex/issues/260) asked for is 37.72 MiB, in two files that are each under 25. In the browser, WebAssembly beat WebGPU, so the app ships WebAssembly only.[^wasm]
 
 ![File sizes against the 25 MiB per-file limit: the visual tower would be 37.72 MiB as one file, so it ships as a 13.72 MiB graph and a 24.00 MiB data file; the occurrence prior is 21.54 MiB and the text classifier 8.09 MiB](d17.svg)
 
@@ -312,23 +298,17 @@ The best bug was in the crop. TinyCLIP was trained on photos resized to 248 pixe
 
 Every label the model knows is a bird, so anything that isn't a bird becomes the most plausible bird. The model card puts it better than I can: "A squirrel does not get to be unlikely, it only gets to be a slightly worse Carolina Wren." No confidence threshold separates birds from not-birds without throwing away real birds,[^threshold] so on August 25 I shipped a separate bird/not-bird check that can decline to answer. The code comment describes it as "a cheap filter on the common case, not a detector".
 
-A week later my wife tested it on dogs. #387, "Dogs are sometimes owls":
+A week later my wife tested it on dogs, in [Dogs are sometimes owls](https://github.com/jlian/wingdex/issues/387):
 
 > Tested 12 photos of dogs. 8 were identified as birds, 4 correctly rejected.
 >
 > **Every false positive was an owl**, across four species: American Barn Owl (82%, 34%, 28%, 24%, 14%), Western Barn Owl 28%, Stygian Owl 62%, Buff-fronted Owl 29%.
 
-Her report goes on to note that "Owls are the only birds with forward-facing eyes set in a flat facial disc," and that an earlier build had returned Barn Owl at 100% for a photo of a person. Two days later she filed #401:
-
-**This is actually just a baby chicken**
-
-<!-- TODO(John): consider crop/size/pairing -->
-
-![A fluffy chick. WingDex says Saunders's Tern 24%, then Barbados Bullfinch 13% and Genovesa Ground-Finch 11%](just-a-baby-chicken.png)
+Her report goes on to note that "Owls are the only birds with forward-facing eyes set in a flat facial disc," and that an earlier build had returned Barn Owl at 100% for a photo of a person. Two days later she filed [This is actually just a baby chicken](https://github.com/jlian/wingdex/issues/401) (Saunders's Tern, 24%).
 
 I left the filter where it is. It's tuned so that about one real bird in 200 gets wrongly turned away, and moving it to catch more dogs would turn away more birds.
 
-<!-- TODO(John): [R6] the candidate card for one of her dog photos (the owl case): the prior makes the wrong local bird more confident; the check declines. Ask her first. [P14] her issue titles as a stack of screenshots: #216, #238, #387, #401 (grab the #387 screenshots). -->
+<!-- TODO(John): [R6] the candidate card for one of her dog photos (the owl case): the prior makes the wrong local bird more confident; the check declines. Ask her first. -->
 
 [^threshold]: Measured on 20,105 hard negatives (mostly other wildlife): rejecting 95% of them would also reject 29.6% of real birds. An earlier version of this experiment reported that one threshold "keeps 100.0% of birds for free". It didn't; the birds and the non-birds had been scored by two different scorers. The model card now has a rule that every gate comparison uses one scorer.
 

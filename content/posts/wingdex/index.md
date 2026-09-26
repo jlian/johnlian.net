@@ -195,10 +195,11 @@ Then came the waiting. A recipe pilot on 500 species took 3 to 4 hours, and a fu
 
 The first student, WingCLIP-0.1, did what distillation does and landed just under its teacher. Then I fine-tuned it on real species labels, and it passed BioCLIP-2 on the NABirds test split I'd been checking against all along.[^wiseft] On my golden set, though, it got the first guess right less often than BioCLIP-2 had. The same thing is easy to see in the app today by switching location off.
 
-On January 2 I photographed a Little Egret at 五缘湾 (Wuyuan Bay) in Xiamen. The egret is Xiamen's city bird: it's on the local TV station's logo, the central park is named after it, and the city's nickname is 鹭岛, "Egret Island". Without being told where it was, WingDex looked at my hometown's city bird and said Chinese Egret, at 56%. Little Egret came fourth, at 3%.
+On January 2 I photographed a Little Egret at 五缘湾 (Wuyuan Bay) in Xiamen. The egret is Xiamen's city bird: the city's nickname is 鹭岛, "Egret Island", the logo of [Xiamen TV](https://en.wikipedia.org/wiki/Xiamen_Media_Group) is a stylized egret, and the central park is [Bailuzhou Park](https://www.tripadvisor.com/Attraction_Review-g297407-d2051173-Reviews-Xiamen_Bailuzhou_Park-Xiamen_Fujian.html) (白鹭洲公园), named for the same bird. Without being told where it was, WingDex looked at my hometown's city bird and said Chinese Egret, at 56%.[^merlin-egret] Little Egret came fourth, at 3%.
 
-<!-- TODO(John): exact names of the central park and the TV station, for this line. -->
-<!-- TODO(John): get a second opinion on the egret ID (iNat) before publishing. -->
+<!-- TODO(John): the Xiamen TV egret logo photo (files/memory-imgs/xiamen-tv-egret-logo.png) is third-party, so it's linked, not embedded. Use it only if the license is clear. The park link is TripAdvisor because I couldn't find a neutral page (zh.wikipedia's 白鹭洲公园 is the Nanjing one). -->
+
+[^merlin-egret]: Merlin gets this one right, with or without location. Merlin is good.
 <!-- TODO(John): replace with designed R-card [R1]: vision-only top 5 with similarity bars. -->
 <!-- TODO(John): consider crop/size/pairing (the two egret screenshots could be a side-by-side pair here and in section 12). -->
 

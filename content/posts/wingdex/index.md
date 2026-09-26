@@ -139,7 +139,7 @@ Three minutes later, at 20:52 by my phone clock, I changed direction:
 
 ![20:52 on my phone clock: "I need something a little more like editorial and like magazine vibe actually. Look at the app now. I also like the wingspan logo." Out came a cream serif wordmark with a dove.](editorial-pivot.png "The app behind the prompt is showing demo data: 68 species synthesized from a sanitized eBird CSV, with outings at Stanley Park and at Parque Ibirapuera in São Paulo, where I have not been.")
 
-What stuck, three minutes later, was the editorial look and the nod to *Wingspan*,[^wingspan] and today the icon is a green bird with nothing about it that says glass cleaner.
+What stuck was the editorial look and the nod to *Wingspan*,[^wingspan] and today the icon is a green bird with nothing about it that says glass cleaner.
 
 [^wingspan]: The board game [*Wingspan*](https://stonemaiergames.com/games/wingspan/). I have bought exactly three board games in my life, *Pandemic Legacy*, *Concordia* and *Wingspan*, and I bought *Wingspan* before I ever took a bird photo.
 

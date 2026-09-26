@@ -1,0 +1,78 @@
+{
+  "id": "c5",
+  "title": "Parameters",
+  "subtitle": "Visual tower, millions of parameters.",
+  "setup": "Counts from the benchmark harness. WingCLIP-0.3 is 38.33M of backbone plus a 0.39M projection.",
+  "source": "[BENCH290.md](https://github.com/jlian/wingdex/blob/benchmark/nabirds-2026-09/ml/distill/BENCH290.md).",
+  "unit": "M",
+  "orient": "h",
+  "toggles": [
+    {
+      "id": "scale",
+      "label": "Scale",
+      "default": "log",
+      "options": [
+        {
+          "value": "log",
+          "label": "Log"
+        },
+        {
+          "value": "linear",
+          "label": "Linear"
+        }
+      ]
+    }
+  ],
+  "series": [
+    {
+      "id": "log",
+      "scale": "log",
+      "setup": "visual tower, millions of parameters",
+      "points": [
+        {
+          "key": "wingclip-0.3",
+          "model": "WingCLIP-0.3",
+          "value": 38.7,
+          "highlight": true
+        },
+        {
+          "key": "bioclip-2",
+          "model": "BioCLIP-2",
+          "value": 304.0,
+          "highlight": false
+        },
+        {
+          "key": "bioclip-2.5",
+          "model": "BioCLIP 2.5",
+          "value": 632.1,
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "linear",
+      "scale": "linear",
+      "setup": "visual tower, millions of parameters",
+      "points": [
+        {
+          "key": "wingclip-0.3",
+          "model": "WingCLIP-0.3",
+          "value": 38.7,
+          "highlight": true
+        },
+        {
+          "key": "bioclip-2",
+          "model": "BioCLIP-2",
+          "value": 304.0,
+          "highlight": false
+        },
+        {
+          "key": "bioclip-2.5",
+          "model": "BioCLIP 2.5",
+          "value": 632.1,
+          "highlight": false
+        }
+      ]
+    }
+  ]
+}

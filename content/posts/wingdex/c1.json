@@ -1,0 +1,90 @@
+{
+  "id": "c1",
+  "title": "Top-1 vs top-5",
+  "subtitle": "NABirds, 48,527 images, 11,167 labels. Birds only.",
+  "setup": "Zero-shot, each model with its own text tower and one prompt per species, measured on one harness on Sep 2, 2026. Top-5 counts a photo as right if the true species is anywhere in the first five.",
+  "source": "[BENCH290.md](https://github.com/jlian/wingdex/blob/benchmark/nabirds-2026-09/ml/distill/BENCH290.md).",
+  "unit": "%",
+  "orient": "h",
+  "toggles": [
+    {
+      "id": "k",
+      "label": "Metric",
+      "default": "top1",
+      "options": [
+        {
+          "value": "top1",
+          "label": "Top-1"
+        },
+        {
+          "value": "top5",
+          "label": "Top-5"
+        }
+      ]
+    }
+  ],
+  "series": [
+    {
+      "id": "top1",
+      "k": "top1",
+      "setup": "NABirds, all 48,527 images against 11,167 labels, top-1",
+      "points": [
+        {
+          "key": "wingclip-0.3",
+          "model": "WingCLIP-0.3",
+          "value": 86.84,
+          "highlight": true
+        },
+        {
+          "key": "bioclip-2.5",
+          "model": "BioCLIP 2.5",
+          "value": 90.31,
+          "highlight": false
+        },
+        {
+          "key": "bioclip-2",
+          "model": "BioCLIP-2",
+          "value": 86.31,
+          "highlight": false
+        },
+        {
+          "key": "clip-vit-l14",
+          "model": "CLIP ViT-L/14",
+          "value": 32.5,
+          "highlight": false
+        }
+      ]
+    },
+    {
+      "id": "top5",
+      "k": "top5",
+      "setup": "NABirds, all 48,527 images against 11,167 labels, top-5",
+      "points": [
+        {
+          "key": "wingclip-0.3",
+          "model": "WingCLIP-0.3",
+          "value": 96.99,
+          "highlight": true
+        },
+        {
+          "key": "bioclip-2.5",
+          "model": "BioCLIP 2.5",
+          "value": 98.06,
+          "highlight": false
+        },
+        {
+          "key": "bioclip-2",
+          "model": "BioCLIP-2",
+          "value": 97.24,
+          "highlight": false
+        },
+        {
+          "key": "clip-vit-l14",
+          "model": "CLIP ViT-L/14",
+          "value": 61.01,
+          "highlight": false
+        }
+      ]
+    }
+  ]
+}

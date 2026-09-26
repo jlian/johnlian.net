@@ -1,0 +1,29 @@
+{{- /*
+Launch-style chart from the page bundle. Usage: {{< chart "c3" >}}
+
+Needs <id>.svg (a complete static chart; the no-JS rendering) and optionally
+<id>.json (subtitle/setup/source for the caption, and toggles for the script).
+Sets a page flag so site-scripts.html loads js/chart.js on this page only.
+*/ -}}
+{{- $id := .Get 0 -}}
+{{- $svg := .Page.Resources.GetMatch (printf "%s.svg" $id) -}}
+{{- if not $svg -}}
+  {{- errorf "chart %q: %s.svg not found in the page bundle: %s" $id $id .Position -}}
+{{- end -}}
+{{- $json := .Page.Resources.GetMatch (printf "%s.json" $id) -}}
+{{- $data := dict -}}
+{{- with $json }}{{ $data = . | transform.Unmarshal }}{{ end -}}
+{{- .Page.Store.Set "hasChart" true -}}
+<figure class="wd-chart mh0 mv4" id="chart-{{ $id }}" data-chart="{{ $id }}">
+<div class="wd-chart-svg">{{ $svg.Content | replaceRE `^\s*<\?xml[^>]*>\s*` "" | safeHTML }}</div>
+{{- with $json }}
+<script type="application/json" class="wd-chart-data">{{ .Content | safeJS }}</script>
+{{- end }}
+{{- if or $data.subtitle $data.setup $data.source }}
+<figcaption class="f6 gray lh-copy mt2">
+  {{- with $data.subtitle }}{{ . }}{{ end }}
+  {{- with $data.setup }} {{ . }}{{ end }}
+  {{- with $data.source }} Source: {{ . | markdownify }}{{ end -}}
+</figcaption>
+{{- end }}
+</figure>

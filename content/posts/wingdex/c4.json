@@ -1,0 +1,66 @@
+{
+  "id": "c4",
+  "title": "Accuracy vs speed",
+  "subtitle": "NABirds top-1 against milliseconds per image. Bubble area is parameters. Birds only.",
+  "setup": "NABirds, all 48,527 images against 11,167 labels. Zero-shot, each model with its own text tower and one prompt per species, measured on one harness on Sep 2, 2026. Latency is fp32 PyTorch at batch 32 on one RTX 3080, 100 iterations after 20 warmup; the app runs int8 in a browser tab, so these compare models to each other, not to a phone.",
+  "source": "[BENCH290.md](https://github.com/jlian/wingdex/blob/benchmark/nabirds-2026-09/ml/distill/BENCH290.md).",
+  "unit": "%",
+  "orient": "xy",
+  "toggles": [],
+  "series": [
+    {
+      "id": "all",
+      "setup": "batch 32, fp32, RTX 3080",
+      "points": [
+        {
+          "key": "wingclip-0.3",
+          "model": "WingCLIP-0.3",
+          "value": 86.84,
+          "ms_per_image": 1.344,
+          "params_M": 38.7,
+          "highlight": true
+        },
+        {
+          "key": "wingclip-0.1",
+          "model": "WingCLIP-0.1",
+          "value": 89.9,
+          "ms_per_image": 2.686,
+          "params_M": 86.6,
+          "highlight": true
+        },
+        {
+          "key": "bioclip-2",
+          "model": "BioCLIP-2",
+          "value": 86.31,
+          "ms_per_image": 11.105,
+          "params_M": 304.0,
+          "highlight": false
+        },
+        {
+          "key": "bioclip-2.5",
+          "model": "BioCLIP 2.5",
+          "value": 90.31,
+          "ms_per_image": 23.585,
+          "params_M": 632.1,
+          "highlight": false
+        },
+        {
+          "key": "bioclip-inat-only",
+          "model": "BioCLIP iNat-only",
+          "value": 75.94,
+          "ms_per_image": 2.669,
+          "params_M": 86.2,
+          "highlight": false
+        },
+        {
+          "key": "bioclip-1",
+          "model": "BioCLIP",
+          "value": 70.21,
+          "ms_per_image": 2.69,
+          "params_M": 86.2,
+          "highlight": false
+        }
+      ]
+    }
+  ]
+}

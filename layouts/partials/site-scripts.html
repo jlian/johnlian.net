@@ -13,4 +13,5 @@
 {{ end }}
 {{ if $hasMermaid }}
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-{{ end }}
+{{ end }}{{ if .Store.Get "hasChart" }}{{ with resources.Get "js/chart.js" | minify }}
+  <script src="{{ .RelPermalink }}" defer></script>{{ end }}{{ end }}
